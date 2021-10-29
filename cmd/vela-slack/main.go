@@ -70,14 +70,14 @@ func main() {
 		// Config Flags
 
 		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_FILEPATH", "FILEPATH"},
-			FilePath: string("/vela/parameters/slack/filepath,/vela/secrets/slack/filepath"),
+			EnvVars:  []string{"PARAMETER_FILEPATH", "SLACK_FILEPATH"},
+			FilePath: "/vela/parameters/slack/filepath,/vela/secrets/slack/filepath",
 			Name:     "filepath",
 			Usage:    "file path field for setting a path to a message file",
 		},
 		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_WEBHOOK", "SLACK_WEBHOOK", "WEBHOOK"},
-			FilePath: string("/vela/parameters/slack/webhook,/vela/secrets/slack/webhook"),
+			EnvVars:  []string{"PARAMETER_WEBHOOK", "SLACK_WEBHOOK"},
+			FilePath: "/vela/parameters/slack/webhook,/vela/secrets/slack/webhook",
 			Name:     "webhook",
 			Usage:    "slack webhook used to post log messages to channel",
 		},
@@ -85,44 +85,44 @@ func main() {
 		// Webhook Flags
 
 		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_USERNAME", "USERNAME"},
-			FilePath: string("/vela/parameters/slack/username,/vela/secrets/slack/username"),
+			EnvVars:  []string{"PARAMETER_USERNAME", "SLACK_USERNAME"},
+			FilePath: "/vela/parameters/slack/username,/vela/secrets/slack/username",
 			Name:     "username",
 			Usage:    "webhook message field for setting the username",
 		},
 		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_ICONEMOJI", "ICONEMOJI"},
-			FilePath: string("/vela/parameters/slack/icon_emoji,/vela/secrets/slack/icon_emoji"),
+			EnvVars:  []string{"PARAMETER_ICON_EMOJI", "SLACK_ICON_EMOJI"},
+			FilePath: "/vela/parameters/slack/icon_emoji,/vela/secrets/slack/icon_emoji",
 			Name:     "icon-emoji",
 			Usage:    "webhook message field for setting the icon emoji",
 		},
 		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_ICONURL,ICONURL"},
-			FilePath: string("/vela/parameters/slack/icon_url,/vela/secrets/slack/icon_url"),
+			EnvVars:  []string{"PARAMETER_ICON_URL", "SLACK_ICON_URL"},
+			FilePath: "/vela/parameters/slack/icon_url,/vela/secrets/slack/icon_url",
 			Name:     "icon-url",
 			Usage:    "webhook message field for setting the icon url",
 		},
 		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_CHANNEL", "CHANNEL"},
-			FilePath: string("/vela/parameters/slack/channel,/vela/secrets/slack/channel"),
+			EnvVars:  []string{"PARAMETER_CHANNEL", "SLACK_CHANNEL"},
+			FilePath: "/vela/parameters/slack/channel,/vela/secrets/slack/channel",
 			Name:     "channel",
 			Usage:    "webhook message field for setting channel",
 		},
 		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_THREADTS", "THREADTS"},
-			FilePath: string("/vela/parameters/slack/thread_ts,/vela/secrets/slack/thread_ts"),
+			EnvVars:  []string{"PARAMETER_THREAD_TS", "SLACK_THREAD_TS"},
+			FilePath: "/vela/parameters/slack/thread_ts,/vela/secrets/slack/thread_ts",
 			Name:     "thread-ts",
 			Usage:    "webhook message field for setting the thread timestamp",
 		},
 		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_TEXT", "TEXT"},
-			FilePath: string("/vela/parameters/slack/text,/vela/secrets/slack/text"),
+			EnvVars:  []string{"PARAMETER_TEXT", "SLACK_TEXT"},
+			FilePath: "/vela/parameters/slack/text,/vela/secrets/slack/text",
 			Name:     "text",
 			Usage:    "webhook message field for setting text",
 		},
 		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_PARSE", "PARSE"},
-			FilePath: string("/vela/parameters/slack/parse,/vela/secrets/slack/parse"),
+			EnvVars:  []string{"PARAMETER_PARSE", "SLACK_PARSE"},
+			FilePath: "/vela/parameters/slack/parse,/vela/secrets/slack/parse",
 			Name:     "parse",
 			Usage:    "webhook message field for setting parse options",
 		},
