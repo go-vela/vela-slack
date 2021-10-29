@@ -1,4 +1,4 @@
-# vela-influx
+# vela-slack
 
 [![license](https://img.shields.io/crates/l/gl.svg)](../LICENSE)
 [![GoDoc](https://godoc.org/github.com/go-vela/vela-slack?status.svg)](https://godoc.org/github.com/go-vela/vela-slack)

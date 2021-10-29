@@ -34,21 +34,21 @@ We are always open to new PRs! You can follow the below guide for learning how y
 
 ```bash
 # Clone the project
-git clone git@github.com:go-vela/vela-influx.git $HOME/go-vela/vela-influx
+git clone git@github.com:go-vela/vela-slack.git $HOME/go-vela/vela-slack
 ```
 
 * Navigate to the repository code:
 
 ```bash
 # Change into the project directory
-cd $HOME/go-vela/vela-influx
+cd $HOME/go-vela/vela-slack
 ```
 
 * Point the original code at your fork:
 
 ```bash
 # Add a remote branch pointing to your fork
-git remote add fork https://github.com/your_fork/vela-influx
+git remote add fork https://github.com/your_fork/vela-slack
 ```
 
 ### Development
@@ -59,7 +59,7 @@ git remote add fork https://github.com/your_fork/vela-influx
 
 ```bash
 # change into the cloned project directory
-cd $HOME/go-vela/vela-influx
+cd $HOME/go-vela/vela-slack
 ```
 
 * Write your code and tests to implement the changes you desire.
