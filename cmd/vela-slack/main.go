@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/go-vela/vela-slack/version"
+	"github.com/slack-go/slack"
 
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
@@ -65,6 +66,217 @@ func main() {
 			Usage:    "set log level - options: (trace|debug|info|warn|error|fatal|panic)",
 			Value:    "info",
 		},
+
+		// Config Flags
+
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_FILEPATH", "FILEPATH"},
+			FilePath: string("/vela/parameters/slack/filepath,/vela/secrets/slack/filepath"),
+			Name:     "filepath",
+			Usage:    "file path field for setting a path to a message file",
+		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_WEBHOOK", "SLACK_WEBHOOK", "WEBHOOK"},
+			FilePath: string("/vela/parameters/slack/webhook,/vela/secrets/slack/webhook"),
+			Name:     "webhook",
+			Usage:    "slack webhook used to post log messages to channel",
+		},
+
+		// Webhook Flags
+
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_USERNAME", "USERNAME"},
+			FilePath: string("/vela/parameters/slack/username,/vela/secrets/slack/username"),
+			Name:     "username",
+			Usage:    "webhook message field for setting the username",
+		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_ICONEMOJI", "ICONEMOJI"},
+			FilePath: string("/vela/parameters/slack/icon_emoji,/vela/secrets/slack/icon_emoji"),
+			Name:     "icon-emoji",
+			Usage:    "webhook message field for setting the icon emoji",
+		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_ICONURL,ICONURL"},
+			FilePath: string("/vela/parameters/slack/icon_url,/vela/secrets/slack/icon_url"),
+			Name:     "icon-url",
+			Usage:    "webhook message field for setting the icon url",
+		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_CHANNEL", "CHANNEL"},
+			FilePath: string("/vela/parameters/slack/channel,/vela/secrets/slack/channel"),
+			Name:     "channel",
+			Usage:    "webhook message field for setting channel",
+		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_THREADTS", "THREADTS"},
+			FilePath: string("/vela/parameters/slack/thread_ts,/vela/secrets/slack/thread_ts"),
+			Name:     "thread-ts",
+			Usage:    "webhook message field for setting the thread timestamp",
+		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_TEXT", "TEXT"},
+			FilePath: string("/vela/parameters/slack/text,/vela/secrets/slack/text"),
+			Name:     "text",
+			Usage:    "webhook message field for setting text",
+		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_PARSE", "PARSE"},
+			FilePath: string("/vela/parameters/slack/parse,/vela/secrets/slack/parse"),
+			Name:     "parse",
+			Usage:    "webhook message field for setting parse options",
+		},
+
+		// Build Environment Variable Flags
+
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_BUILD_AUTHOR", "BUILD_AUTHOR"},
+			Name:    "build-author",
+			Usage:   "environment variable reference for reading in build author",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_BUILD_AUTHOR_EMAIL", "BUILD_AUTHOR_EMAIL"},
+			Name:    "build-author-email",
+			Usage:   "environment variable reference for reading in build author-email",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_BUILD_BRANCH", "BUILD_BRANCH"},
+			Name:    "build-branch",
+			Usage:   "environment variable reference for reading in build branch",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_BUILD_CHANNEL", "BUILD_CHANNEL"},
+			Name:    "build-channel",
+			Usage:   "environment variable reference for reading in build channel",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_BUILD_COMMIT", "BUILD_COMMIT"},
+			Name:    "build-commit",
+			Usage:   "environment variable reference for reading in build commit",
+		},
+		&cli.IntFlag{
+			EnvVars: []string{"VELA_BUILD_CREATED", "BUILD_CREATED"},
+			Name:    "build-created",
+			Usage:   "environment variable reference for reading in build created",
+		},
+		&cli.IntFlag{
+			EnvVars: []string{"VELA_BUILD_ENQUEUED", "BUILD_ENQUEUED"},
+			Name:    "build-enqueued",
+			Usage:   "environment variable reference for reading in build enqueued",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_BUILD_EVENT", "BUILD_EVENT"},
+			Name:    "build-event",
+			Usage:   "environment variable reference for reading in build event",
+		},
+		&cli.IntFlag{
+			EnvVars: []string{"VELA_BUILD_FINISHED", "BUILD_FINISHED"},
+			Name:    "build-finished",
+			Usage:   "environment variable reference for reading in build finished",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_BUILD_HOST", "BUILD_HOST"},
+			Name:    "build-host",
+			Usage:   "environment variable reference for reading in build host",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_BUILD_LINK", "BUILD_LINK"},
+			Name:    "build-link",
+			Usage:   "environment variable reference for reading in build link",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_BUILD_MESSAGE", "BUILD_MESSAGE"},
+			Name:    "build-message",
+			Usage:   "environment variable reference for reading in build message",
+		},
+		&cli.IntFlag{
+			EnvVars: []string{"VELA_BUILD_NUMBER", "BUILD_NUMBER"},
+			Name:    "build-number",
+			Usage:   "environment variable reference for reading in build number",
+		},
+		&cli.IntFlag{
+			EnvVars: []string{"VELA_BUILD_PARENT", "BUILD_PARENT"},
+			Name:    "build-parent",
+			Usage:   "environment variable reference for reading in build parent",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_BUILD_REF", "BUILD_REF"},
+			Name:    "build-ref",
+			Usage:   "environment variable reference for reading in build ref",
+		},
+		&cli.IntFlag{
+			EnvVars: []string{"VELA_BUILD_STARTED", "BUILD_STARTED"},
+			Name:    "build-started",
+			Usage:   "environment variable reference for reading in build started",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_BUILD_SOURCE", "BUILD_SOURCE"},
+			Name:    "build-source",
+			Usage:   "environment variable reference for reading in build source",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_BUILD_TAG", "BUILD_TAG"},
+			Name:    "build-tag",
+			Usage:   "environment variable reference for reading in build tag",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_BUILD_TITLE", "BUILD_TITLE"},
+			Name:    "build-title",
+			Usage:   "environment variable reference for reading in build title",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_BUILD_WORKSPACE", "BUILD_WORKSPACE"},
+			Name:    "build-workspace",
+			Usage:   "environment variable reference for reading in build workspace",
+		},
+
+		// Repository Environment Variable Flags
+
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_REPO_BRANCH", "REPOSITORY_BRANCH"},
+			Name:    "repo-branch",
+			Usage:   "environment variable reference for reading in repository branch",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_REPO_CLONE", "REPOSITORY_CLONE"},
+			Name:    "repo-clone",
+			Usage:   "environment variable reference for reading in repository clone",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_REPO_FULL_NAME", "REPOSITORY_FULL_NAME"},
+			Name:    "repo-full-name",
+			Usage:   "environment variable reference for reading in repository full name",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_REPO_LINK", "REPOSITORY_LINK"},
+			Name:    "repo-link",
+			Usage:   "environment variable reference for reading in repository link",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_REPO_NAME", "REPOSITORY_NAME"},
+			Name:    "repo-name",
+			Usage:   "environment variable reference for reading in repository name",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_REPO_ORG", "REPOSITORY_ORG"},
+			Name:    "repo-org",
+			Usage:   "environment variable reference for reading in repository org",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_REPO_PRIVATE", "REPOSITORY_PRIVATE"},
+			Name:    "repo-private",
+			Usage:   "environment variable reference for reading in repository private",
+		},
+		&cli.IntFlag{
+			EnvVars: []string{"VELA_REPO_TIMEOUT", "REPOSITORY_TIMEOUT"},
+			Name:    "repo-timeout",
+			Usage:   "environment variable reference for reading in repository timeout",
+		},
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_REPO_TRUSTED", "REPOSITORY_TRUSTED"},
+			Name:    "repo-trusted",
+			Usage:   "environment variable reference for reading in repository trusted",
+		},
 	}
 
 	err = app.Run(os.Args)
@@ -101,5 +313,67 @@ func run(c *cli.Context) error {
 		"registry": "https://hub.docker.com/r/target/vela-slack",
 	}).Info("Vela Slack Plugin")
 
-	return nil
+	// create the plugin
+	p := &Plugin{
+		Webhook: c.String("webhook"),
+		Path:    c.String("filepath"),
+		WebhookMsg: &slack.WebhookMessage{
+			Username:        c.String("username"),
+			IconEmoji:       c.String("icon-emoji"),
+			IconURL:         c.String("icon-url"),
+			Channel:         c.String("channel"),
+			ThreadTimestamp: c.String("thread-ts"),
+			Text:            c.String("text"),
+			Parse:           c.String("parse"),
+		},
+		Env: &Env{
+			BuildAuthor:        c.String("build-author"),
+			BuildAuthorEmail:   c.String("build-author-email"),
+			BuildBranch:        c.String("build-branch"),
+			BuildChannel:       c.String("build-channel"),
+			BuildCommit:        c.String("build-commit"),
+			BuildCreated:       c.Int("build-created"),
+			BuildEnqueued:      c.Int("build-enqueued"),
+			BuildEvent:         c.String("build-event"),
+			BuildFinished:      c.Int("build-finished"),
+			BuildHost:          c.String("build-host"),
+			BuildLink:          c.String("build-link"),
+			BuildMessage:       c.String("build-message"),
+			BuildNumber:        c.Int("build-number"),
+			BuildParent:        c.Int("build-parent"),
+			BuildRef:           c.String("build-ref"),
+			BuildStarted:       c.Int("build-started"),
+			BuildSource:        c.String("build-source"),
+			BuildTag:           c.String("build-tag"),
+			BuildTitle:         c.String("build-title"),
+			BuildWorkspace:     c.String("build-workspace"),
+			RepositoryBranch:   c.String("repo-branch"),
+			RepoBranch:         c.String("repo-branch"),
+			RepositoryClone:    c.String("repo-clone"),
+			RepoClone:          c.String("repo-clone"),
+			RepositoryFullName: c.String("repo-full-name"),
+			RepoFullName:       c.String("repo-full-name"),
+			RepositoryLink:     c.String("repo-link"),
+			RepoLink:           c.String("repo-link"),
+			RepositoryName:     c.String("repo-name"),
+			RepoName:           c.String("repo-name"),
+			RepositoryOrg:      c.String("repo-org"),
+			RepoOrg:            c.String("repo-org"),
+			RepositoryPrivate:  c.String("repo-private"),
+			RepoPrivate:        c.String("repo-private"),
+			RepositoryTimeout:  c.Int("repo-timeout"),
+			RepoTimeout:        c.Int("repo-timeout"),
+			RepositoryTrusted:  c.String("repo-trusted"),
+			RepoTrusted:        c.String("repo-trusted"),
+		},
+	}
+
+	// validate the plugin
+	err := p.Validate()
+	if err != nil {
+		return err
+	}
+
+	// execute the plugin
+	return p.Exec()
 }
