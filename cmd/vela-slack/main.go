@@ -290,31 +290,31 @@ func main() {
 			EnvVars:  []string{"PARAMETER_LDAP_USERNAME", "LDAP_USERNAME"},
 			FilePath: string("/vela/parameters/ldap/username,/vela/secrets/ldap/username"),
 			Name:     "ldap-username",
-			Usage:    "environment variable reference for LDAP username",
+			Usage:    "environment variable for LDAP username",
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_LDAP_PASSWORD", "LDAP_PASSWORD"},
 			FilePath: string("/vela/parameters/ldap/password,/vela/secrets/ldap/password"),
 			Name:     "ldap-password",
-			Usage:    "environment variable reference for LDAP password",
+			Usage:    "environment variable for LDAP password",
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_LDAP_SERVER", "LDAP_SERVER"},
 			FilePath: string("/vela/parameters/ldap/server,/vela/secrets/ldap/server"),
 			Name:     "ldap-server",
-			Usage:    "environment variable reference for enterprise LDAP server",
+			Usage:    "environment variable for enterprise LDAP server",
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_LDAP_PORT", "LDAP_PORT"},
 			FilePath: string("/vela/parameters/ldap/port,/vela/secrets/ldap/port"),
 			Name:     "ldap-port",
-			Usage:    "environment variable reference for enterprise LDAP port",
+			Usage:    "environment variable for enterprise LDAP port",
 		},
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_LDAP_SEARCH_BASE", "LDAP_SEARCH_BASE"},
 			FilePath: string("/vela/parameters/ldap/searchbase,/vela/secrets/ldap/searchbase"),
 			Name:     "ldap-search-base",
-			Usage:    "environment variable reference for enterprise LDAP search base",
+			Usage:    "environment variable for enterprise LDAP search base",
 		},
 	}
 
