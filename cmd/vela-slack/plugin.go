@@ -15,7 +15,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/Masterminds/sprig"
+	"github.com/Masterminds/sprig/v3"
 	"github.com/sirupsen/logrus"
 	"github.com/slack-go/slack"
 )
