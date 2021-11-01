@@ -7,6 +7,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	"time"
@@ -16,6 +17,11 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
+
+	"crypto/tls"
+	"crypto/x509"
+
+	"gopkg.in/ldap.v2"
 
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -277,6 +283,39 @@ func main() {
 			Name:    "repo-trusted",
 			Usage:   "environment variable reference for reading in repository trusted",
 		},
+
+		// Optional LDAP config flags
+
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_LDAP_USERNAME", "LDAP_USERNAME"},
+			FilePath: string("/vela/parameters/ldap/username,/vela/secrets/ldap/username"),
+			Name:     "ldap-username",
+			Usage:    "environment variable reference for LDAP username",
+		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_LDAP_PASSWORD", "LDAP_PASSWORD"},
+			FilePath: string("/vela/parameters/ldap/password,/vela/secrets/ldap/password"),
+			Name:     "ldap-password",
+			Usage:    "environment variable reference for LDAP password",
+		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_LDAP_SERVER", "LDAP_SERVER"},
+			FilePath: string("/vela/parameters/ldap/server,/vela/secrets/ldap/server"),
+			Name:     "ldap-server",
+			Usage:    "environment variable reference for enterprise LDAP server",
+		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_LDAP_PORT", "LDAP_PORT"},
+			FilePath: string("/vela/parameters/ldap/port,/vela/secrets/ldap/port"),
+			Name:     "ldap-port",
+			Usage:    "environment variable reference for enterprise LDAP port",
+		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_LDAP_SEARCH_BASE", "LDAP_SEARCH_BASE"},
+			FilePath: string("/vela/parameters/ldap/searchbase,/vela/secrets/ldap/searchbase"),
+			Name:     "ldap-search-base",
+			Usage:    "environment variable reference for enterprise LDAP search base",
+		},
 	}
 
 	err = app.Run(os.Args)
@@ -329,6 +368,7 @@ func run(c *cli.Context) error {
 		Env: &Env{
 			BuildAuthor:        c.String("build-author"),
 			BuildAuthorEmail:   c.String("build-author-email"),
+			BuildAuthorLANID:   getLanID(c),
 			BuildBranch:        c.String("build-branch"),
 			BuildChannel:       c.String("build-channel"),
 			BuildCommit:        c.String("build-commit"),
@@ -376,4 +416,71 @@ func run(c *cli.Context) error {
 
 	// execute the plugin
 	return p.Exec()
+}
+
+func getLanID(c *cli.Context) string {
+
+	// LDAP environment variables
+	email := c.String("build-author-email")
+	username := c.String("ldap-username")
+	password := c.String("ldap-password")
+	ldapServer := c.String("ldap-server")
+	ldapPort := c.String("ldap-port")
+	ldapSearchBase := c.String("ldap-search-base")
+
+	// return if LDAP info not provided
+	if username == "" || password == "" {
+		return ""
+	}
+
+	// create LDAP client
+	roots := x509.NewCertPool()
+	caCerts, err := ioutil.ReadFile(os.Getenv("SSL_CERT_FILE"))
+	if err != nil {
+		logrus.Errorf("%s", err)
+		return ""
+	}
+	roots.AppendCertsFromPEM(caCerts)
+
+	config := &tls.Config{
+		ServerName: ldapServer,
+		RootCAs:    roots,
+	}
+
+	l, err := ldap.DialTLS("tcp", fmt.Sprintf("%s:%s", ldapServer, ldapPort), config)
+	if err != nil {
+		logrus.Errorf("%s", err)
+		return ""
+	}
+
+	err = l.Bind(username, password)
+	if err != nil {
+		logrus.Errorf("%s", err)
+		return ""
+	}
+
+	filter := fmt.Sprintf("mail=%s", email)
+	req := ldap.NewSearchRequest(
+		ldapSearchBase,
+		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
+		fmt.Sprintf("(%s)", filter),
+		[]string{"dn", "displayName", "sAMAccountName", "mail"},
+		nil,
+	)
+
+	// search for records
+	sr, err := l.Search(req)
+	if err != nil {
+		logrus.Errorf("%s", err)
+		return ""
+	}
+
+	if len(sr.Entries) != 1 {
+		logrus.Errorf("user does not exist or too many entries returned: %d", len(sr.Entries))
+		return ""
+	}
+
+	// return lanId
+	lanID := sr.Entries[0].GetAttributeValue("sAMAccountName")
+	return lanID
 }

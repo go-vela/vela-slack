@@ -35,6 +35,7 @@ type (
 	Env struct {
 		BuildAuthor        string
 		BuildAuthorEmail   string
+		BuildAuthorLANID   string
 		BuildBranch        string
 		BuildChannel       string
 		BuildCommit        string
