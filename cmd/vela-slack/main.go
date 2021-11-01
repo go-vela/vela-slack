@@ -87,7 +87,7 @@ func main() {
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_USERNAME", "SLACK_USERNAME"},
 			FilePath: "/vela/parameters/slack/username,/vela/secrets/slack/username",
-			Name:     "username",
+			Name:     "slack-username",
 			Usage:    "webhook message field for setting the username",
 		},
 		&cli.StringFlag{
@@ -318,7 +318,7 @@ func run(c *cli.Context) error {
 		Webhook: c.String("webhook"),
 		Path:    c.String("filepath"),
 		WebhookMsg: &slack.WebhookMessage{
-			Username:        c.String("username"),
+			Username:        c.String("slack-username"),
 			IconEmoji:       c.String("icon-emoji"),
 			IconURL:         c.String("icon-url"),
 			Channel:         c.String("channel"),
