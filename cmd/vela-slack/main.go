@@ -366,45 +366,45 @@ func run(c *cli.Context) error {
 			Parse:           c.String("parse"),
 		},
 		Env: &Env{
-			BuildAuthor:        c.String("build-author"),
-			BuildAuthorEmail:   c.String("build-author-email"),
-			BuildAuthorLANID:   getLanID(c),
-			BuildBranch:        c.String("build-branch"),
-			BuildChannel:       c.String("build-channel"),
-			BuildCommit:        c.String("build-commit"),
-			BuildCreated:       c.Int("build-created"),
-			BuildEnqueued:      c.Int("build-enqueued"),
-			BuildEvent:         c.String("build-event"),
-			BuildFinished:      c.Int("build-finished"),
-			BuildHost:          c.String("build-host"),
-			BuildLink:          c.String("build-link"),
-			BuildMessage:       c.String("build-message"),
-			BuildNumber:        c.Int("build-number"),
-			BuildParent:        c.Int("build-parent"),
-			BuildRef:           c.String("build-ref"),
-			BuildStarted:       c.Int("build-started"),
-			BuildSource:        c.String("build-source"),
-			BuildTag:           c.String("build-tag"),
-			BuildTitle:         c.String("build-title"),
-			BuildWorkspace:     c.String("build-workspace"),
-			RepositoryBranch:   c.String("repo-branch"),
-			RepoBranch:         c.String("repo-branch"),
-			RepositoryClone:    c.String("repo-clone"),
-			RepoClone:          c.String("repo-clone"),
-			RepositoryFullName: c.String("repo-full-name"),
-			RepoFullName:       c.String("repo-full-name"),
-			RepositoryLink:     c.String("repo-link"),
-			RepoLink:           c.String("repo-link"),
-			RepositoryName:     c.String("repo-name"),
-			RepoName:           c.String("repo-name"),
-			RepositoryOrg:      c.String("repo-org"),
-			RepoOrg:            c.String("repo-org"),
-			RepositoryPrivate:  c.String("repo-private"),
-			RepoPrivate:        c.String("repo-private"),
-			RepositoryTimeout:  c.Int("repo-timeout"),
-			RepoTimeout:        c.Int("repo-timeout"),
-			RepositoryTrusted:  c.String("repo-trusted"),
-			RepoTrusted:        c.String("repo-trusted"),
+			BuildAuthor:               c.String("build-author"),
+			BuildAuthorEmail:          c.String("build-author-email"),
+			BuildAuthorSAMAccountName: getSAMAccountName(c),
+			BuildBranch:               c.String("build-branch"),
+			BuildChannel:              c.String("build-channel"),
+			BuildCommit:               c.String("build-commit"),
+			BuildCreated:              c.Int("build-created"),
+			BuildEnqueued:             c.Int("build-enqueued"),
+			BuildEvent:                c.String("build-event"),
+			BuildFinished:             c.Int("build-finished"),
+			BuildHost:                 c.String("build-host"),
+			BuildLink:                 c.String("build-link"),
+			BuildMessage:              c.String("build-message"),
+			BuildNumber:               c.Int("build-number"),
+			BuildParent:               c.Int("build-parent"),
+			BuildRef:                  c.String("build-ref"),
+			BuildStarted:              c.Int("build-started"),
+			BuildSource:               c.String("build-source"),
+			BuildTag:                  c.String("build-tag"),
+			BuildTitle:                c.String("build-title"),
+			BuildWorkspace:            c.String("build-workspace"),
+			RepositoryBranch:          c.String("repo-branch"),
+			RepoBranch:                c.String("repo-branch"),
+			RepositoryClone:           c.String("repo-clone"),
+			RepoClone:                 c.String("repo-clone"),
+			RepositoryFullName:        c.String("repo-full-name"),
+			RepoFullName:              c.String("repo-full-name"),
+			RepositoryLink:            c.String("repo-link"),
+			RepoLink:                  c.String("repo-link"),
+			RepositoryName:            c.String("repo-name"),
+			RepoName:                  c.String("repo-name"),
+			RepositoryOrg:             c.String("repo-org"),
+			RepoOrg:                   c.String("repo-org"),
+			RepositoryPrivate:         c.String("repo-private"),
+			RepoPrivate:               c.String("repo-private"),
+			RepositoryTimeout:         c.Int("repo-timeout"),
+			RepoTimeout:               c.Int("repo-timeout"),
+			RepositoryTrusted:         c.String("repo-trusted"),
+			RepoTrusted:               c.String("repo-trusted"),
 		},
 	}
 
@@ -419,7 +419,7 @@ func run(c *cli.Context) error {
 }
 
 // Retrieves sAMAccountName from LDAP server using build author's email.
-func getLanID(c *cli.Context) string {
+func getSAMAccountName(c *cli.Context) string {
 
 	// LDAP environment variables
 	email := c.String("build-author-email")
@@ -481,7 +481,7 @@ func getLanID(c *cli.Context) string {
 		return ""
 	}
 
-	// return lanId
-	lanID := sr.Entries[0].GetAttributeValue("sAMAccountName")
-	return lanID
+	// return sAMAccountName
+	sAMAccountName := sr.Entries[0].GetAttributeValue("sAMAccountName")
+	return sAMAccountName
 }
