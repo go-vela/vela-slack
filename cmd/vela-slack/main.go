@@ -444,7 +444,7 @@ func getSAMAccountName(c *cli.Context) string {
 	roots.AppendCertsFromPEM(caCerts)
 
 	config := &tls.Config{
-	    MinVersion: tls.VersionTLS12,
+		MinVersion: tls.VersionTLS12,
 		ServerName: ldapServer,
 		RootCAs:    roots,
 	}
