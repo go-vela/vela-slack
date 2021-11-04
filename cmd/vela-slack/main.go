@@ -418,7 +418,7 @@ func run(c *cli.Context) error {
 	return p.Exec()
 }
 
-// Retrieves sAMAccountName from LDAP server using build author's email
+// Retrieves sAMAccountName from LDAP server using build author's email.
 func getLanID(c *cli.Context) string {
 
 	// LDAP environment variables
