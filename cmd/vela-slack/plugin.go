@@ -192,7 +192,7 @@ func (p *Plugin) Validate() error {
 }
 
 // getAttachmentFromFile function to open and parse json file into
-// slack webhook message payload
+// slack webhook message payload.
 func getAttachmentFromFile(p *Plugin) ([]slack.Attachment, error) {
 	// open the provided json template
 	jsonFile, err := os.Open(p.Path)

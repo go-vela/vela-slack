@@ -425,9 +425,9 @@ func getSAMAccountName(c *cli.Context) string {
 	email := c.String("build-author-email")
 	username := c.String("ldap-username")
 	password := c.String("ldap-password")
-	ldapServer := c.String("ldap-server")
-	ldapPort := c.String("ldap-port")
-	ldapSearchBase := c.String("ldap-search-base")
+	ldapServer := os.Getenv("LDAP_SERVER")
+	ldapPort := os.Getenv("LDAP_PORT")
+	ldapSearchBase := os.Getenv("LDAP_SEARCH_BASE")
 
 	// return if LDAP info not provided
 	if username == "" || password == "" {
