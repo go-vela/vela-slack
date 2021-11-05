@@ -72,6 +72,11 @@ func main() {
 			Usage:    "set log level - options: (trace|debug|info|warn|error|fatal|panic)",
 			Value:    "info",
 		},
+		&cli.StringFlag{
+			EnvVars: []string{"PARAMETER_SSL_CERT_FILE", "SSL_CERT_FILE"},
+			Name:    "sslcert.path",
+			Usage:   "path to ssl cert file",
+		},
 
 		// Config Flags
 
@@ -298,6 +303,24 @@ func main() {
 			Name:     "ldap-password",
 			Usage:    "environment variable for LDAP password",
 		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_LDAP_SERVER", "LDAP_SERVER"},
+			FilePath: string("/vela/parameters/ldap/server,/vela/secrets/ldap/server"),
+			Name:     "ldap-server",
+			Usage:    "environment variable for enterprise LDAP server",
+		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_LDAP_PORT", "LDAP_PORT"},
+			FilePath: string("/vela/parameters/ldap/port,/vela/secrets/ldap/port"),
+			Name:     "ldap-port",
+			Usage:    "environment variable for enterprise LDAP port",
+		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_LDAP_SEARCH_BASE", "LDAP_SEARCH_BASE"},
+			FilePath: string("/vela/parameters/ldap/searchbase,/vela/secrets/ldap/searchbase"),
+			Name:     "ldap-search-base",
+			Usage:    "environment variable for enterprise LDAP search base",
+		},
 	}
 
 	err = app.Run(os.Args)
@@ -407,9 +430,9 @@ func getSAMAccountName(c *cli.Context) string {
 	email := c.String("build-author-email")
 	username := c.String("ldap-username")
 	password := c.String("ldap-password")
-	ldapServer := os.Getenv("LDAP_SERVER")
-	ldapPort := os.Getenv("LDAP_PORT")
-	ldapSearchBase := os.Getenv("LDAP_SEARCH_BASE")
+	ldapServer := c.String("ldap-server")
+	ldapPort := c.String("ldap-port")
+	ldapSearchBase := c.String("ldap-search-base")
 
 	// return if LDAP info not provided
 	if username == "" || password == "" {
@@ -418,7 +441,7 @@ func getSAMAccountName(c *cli.Context) string {
 
 	// create LDAP client
 	roots := x509.NewCertPool()
-	caCerts, err := ioutil.ReadFile(os.Getenv("SSL_CERT_FILE"))
+	caCerts, err := ioutil.ReadFile(c.String("sslcert.path"))
 	if err != nil {
 		logrus.Errorf("%s", err)
 		return ""
