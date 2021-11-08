@@ -21,7 +21,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 
-	"gopkg.in/ldap.v2"
+	"github.com/go-ldap/ldap/v3"
 
 	_ "github.com/joho/godotenv/autoload"
 )
