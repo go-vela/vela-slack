@@ -73,9 +73,10 @@ func main() {
 			Value:    "info",
 		},
 		&cli.StringFlag{
-			EnvVars: []string{"PARAMETER_SSL_CERT_FILE", "SSL_CERT_FILE"},
-			Name:    "sslcert.path",
-			Usage:   "path to ssl cert file",
+			EnvVars:  []string{"PARAMETER_SSL_CERT_FILE", "SSL_CERT_FILE"},
+			FilePath: "/vela/parameters/sslcert/filepath,/vela/secrets/sslcert/filepath",
+			Name:     "sslcert.path",
+			Usage:    "path to ssl cert file",
 		},
 
 		// Config Flags
