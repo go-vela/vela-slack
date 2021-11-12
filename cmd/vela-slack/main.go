@@ -7,6 +7,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	"time"
@@ -16,6 +17,11 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
+
+	"crypto/tls"
+	"crypto/x509"
+
+	"github.com/go-ldap/ldap/v3"
 
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -66,6 +72,12 @@ func main() {
 			Usage:    "set log level - options: (trace|debug|info|warn|error|fatal|panic)",
 			Value:    "info",
 		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_SSL_CERT_FILE", "SSL_CERT_FILE"},
+			FilePath: "/vela/parameters/sslcert/filepath,/vela/secrets/sslcert/filepath",
+			Name:     "sslcert.path",
+			Usage:    "path to ssl cert file",
+		},
 
 		// Config Flags
 
@@ -87,7 +99,7 @@ func main() {
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_USERNAME", "SLACK_USERNAME"},
 			FilePath: "/vela/parameters/slack/username,/vela/secrets/slack/username",
-			Name:     "username",
+			Name:     "slack-username",
 			Usage:    "webhook message field for setting the username",
 		},
 		&cli.StringFlag{
@@ -277,6 +289,39 @@ func main() {
 			Name:    "repo-trusted",
 			Usage:   "environment variable reference for reading in repository trusted",
 		},
+
+		// Optional LDAP config flags
+
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_LDAP_USERNAME", "LDAP_USERNAME"},
+			FilePath: string("/vela/parameters/ldap/username,/vela/secrets/ldap/username"),
+			Name:     "ldap-username",
+			Usage:    "environment variable for LDAP username",
+		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_LDAP_PASSWORD", "LDAP_PASSWORD"},
+			FilePath: string("/vela/parameters/ldap/password,/vela/secrets/ldap/password"),
+			Name:     "ldap-password",
+			Usage:    "environment variable for LDAP password",
+		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_LDAP_SERVER", "LDAP_SERVER"},
+			FilePath: string("/vela/parameters/ldap/server,/vela/secrets/ldap/server"),
+			Name:     "ldap-server",
+			Usage:    "environment variable for enterprise LDAP server",
+		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_LDAP_PORT", "LDAP_PORT"},
+			FilePath: string("/vela/parameters/ldap/port,/vela/secrets/ldap/port"),
+			Name:     "ldap-port",
+			Usage:    "environment variable for enterprise LDAP port",
+		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_LDAP_SEARCH_BASE", "LDAP_SEARCH_BASE"},
+			FilePath: string("/vela/parameters/ldap/searchbase,/vela/secrets/ldap/searchbase"),
+			Name:     "ldap-search-base",
+			Usage:    "environment variable for enterprise LDAP search base",
+		},
 	}
 
 	err = app.Run(os.Args)
@@ -318,7 +363,7 @@ func run(c *cli.Context) error {
 		Webhook: c.String("webhook"),
 		Path:    c.String("filepath"),
 		WebhookMsg: &slack.WebhookMessage{
-			Username:        c.String("username"),
+			Username:        c.String("slack-username"),
 			IconEmoji:       c.String("icon-emoji"),
 			IconURL:         c.String("icon-url"),
 			Channel:         c.String("channel"),
@@ -327,44 +372,45 @@ func run(c *cli.Context) error {
 			Parse:           c.String("parse"),
 		},
 		Env: &Env{
-			BuildAuthor:        c.String("build-author"),
-			BuildAuthorEmail:   c.String("build-author-email"),
-			BuildBranch:        c.String("build-branch"),
-			BuildChannel:       c.String("build-channel"),
-			BuildCommit:        c.String("build-commit"),
-			BuildCreated:       c.Int("build-created"),
-			BuildEnqueued:      c.Int("build-enqueued"),
-			BuildEvent:         c.String("build-event"),
-			BuildFinished:      c.Int("build-finished"),
-			BuildHost:          c.String("build-host"),
-			BuildLink:          c.String("build-link"),
-			BuildMessage:       c.String("build-message"),
-			BuildNumber:        c.Int("build-number"),
-			BuildParent:        c.Int("build-parent"),
-			BuildRef:           c.String("build-ref"),
-			BuildStarted:       c.Int("build-started"),
-			BuildSource:        c.String("build-source"),
-			BuildTag:           c.String("build-tag"),
-			BuildTitle:         c.String("build-title"),
-			BuildWorkspace:     c.String("build-workspace"),
-			RepositoryBranch:   c.String("repo-branch"),
-			RepoBranch:         c.String("repo-branch"),
-			RepositoryClone:    c.String("repo-clone"),
-			RepoClone:          c.String("repo-clone"),
-			RepositoryFullName: c.String("repo-full-name"),
-			RepoFullName:       c.String("repo-full-name"),
-			RepositoryLink:     c.String("repo-link"),
-			RepoLink:           c.String("repo-link"),
-			RepositoryName:     c.String("repo-name"),
-			RepoName:           c.String("repo-name"),
-			RepositoryOrg:      c.String("repo-org"),
-			RepoOrg:            c.String("repo-org"),
-			RepositoryPrivate:  c.String("repo-private"),
-			RepoPrivate:        c.String("repo-private"),
-			RepositoryTimeout:  c.Int("repo-timeout"),
-			RepoTimeout:        c.Int("repo-timeout"),
-			RepositoryTrusted:  c.String("repo-trusted"),
-			RepoTrusted:        c.String("repo-trusted"),
+			BuildAuthor:               c.String("build-author"),
+			BuildAuthorEmail:          c.String("build-author-email"),
+			BuildAuthorSAMAccountName: getSAMAccountName(c),
+			BuildBranch:               c.String("build-branch"),
+			BuildChannel:              c.String("build-channel"),
+			BuildCommit:               c.String("build-commit"),
+			BuildCreated:              c.Int("build-created"),
+			BuildEnqueued:             c.Int("build-enqueued"),
+			BuildEvent:                c.String("build-event"),
+			BuildFinished:             c.Int("build-finished"),
+			BuildHost:                 c.String("build-host"),
+			BuildLink:                 c.String("build-link"),
+			BuildMessage:              c.String("build-message"),
+			BuildNumber:               c.Int("build-number"),
+			BuildParent:               c.Int("build-parent"),
+			BuildRef:                  c.String("build-ref"),
+			BuildStarted:              c.Int("build-started"),
+			BuildSource:               c.String("build-source"),
+			BuildTag:                  c.String("build-tag"),
+			BuildTitle:                c.String("build-title"),
+			BuildWorkspace:            c.String("build-workspace"),
+			RepositoryBranch:          c.String("repo-branch"),
+			RepoBranch:                c.String("repo-branch"),
+			RepositoryClone:           c.String("repo-clone"),
+			RepoClone:                 c.String("repo-clone"),
+			RepositoryFullName:        c.String("repo-full-name"),
+			RepoFullName:              c.String("repo-full-name"),
+			RepositoryLink:            c.String("repo-link"),
+			RepoLink:                  c.String("repo-link"),
+			RepositoryName:            c.String("repo-name"),
+			RepoName:                  c.String("repo-name"),
+			RepositoryOrg:             c.String("repo-org"),
+			RepoOrg:                   c.String("repo-org"),
+			RepositoryPrivate:         c.String("repo-private"),
+			RepoPrivate:               c.String("repo-private"),
+			RepositoryTimeout:         c.Int("repo-timeout"),
+			RepoTimeout:               c.Int("repo-timeout"),
+			RepositoryTrusted:         c.String("repo-trusted"),
+			RepoTrusted:               c.String("repo-trusted"),
 		},
 	}
 
@@ -376,4 +422,73 @@ func run(c *cli.Context) error {
 
 	// execute the plugin
 	return p.Exec()
+}
+
+// Retrieves sAMAccountName from LDAP server using build author's email.
+func getSAMAccountName(c *cli.Context) string {
+
+	// LDAP environment variables
+	email := c.String("build-author-email")
+	username := c.String("ldap-username")
+	password := c.String("ldap-password")
+	ldapServer := c.String("ldap-server")
+	ldapPort := c.String("ldap-port")
+	ldapSearchBase := c.String("ldap-search-base")
+
+	// return if LDAP info not provided
+	if username == "" || password == "" {
+		return ""
+	}
+
+	// create LDAP client
+	roots := x509.NewCertPool()
+	caCerts, err := ioutil.ReadFile(c.String("sslcert.path"))
+	if err != nil {
+		logrus.Errorf("%s", err)
+		return ""
+	}
+	roots.AppendCertsFromPEM(caCerts)
+
+	config := &tls.Config{
+		MinVersion: tls.VersionTLS12,
+		ServerName: ldapServer,
+		RootCAs:    roots,
+	}
+
+	l, err := ldap.DialTLS("tcp", fmt.Sprintf("%s:%s", ldapServer, ldapPort), config)
+	if err != nil {
+		logrus.Errorf("%s", err)
+		return ""
+	}
+
+	err = l.Bind(username, password)
+	if err != nil {
+		logrus.Errorf("%s", err)
+		return ""
+	}
+
+	filter := fmt.Sprintf("mail=%s", email)
+	req := ldap.NewSearchRequest(
+		ldapSearchBase,
+		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
+		fmt.Sprintf("(%s)", filter),
+		[]string{"dn", "displayName", "sAMAccountName", "mail"},
+		nil,
+	)
+
+	// search for records
+	sr, err := l.Search(req)
+	if err != nil {
+		logrus.Errorf("%s", err)
+		return ""
+	}
+
+	if len(sr.Entries) != 1 {
+		logrus.Errorf("user does not exist or too many entries returned: %d", len(sr.Entries))
+		return ""
+	}
+
+	// return sAMAccountName
+	sAMAccountName := sr.Entries[0].GetAttributeValue("sAMAccountName")
+	return sAMAccountName
 }

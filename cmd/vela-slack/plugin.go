@@ -33,44 +33,45 @@ type (
 	// Env struct represents the environment variables the Vela injects
 	// https://go-vela.github.io/docs/concepts/pipeline/steps/environment/
 	Env struct {
-		BuildAuthor        string
-		BuildAuthorEmail   string
-		BuildBranch        string
-		BuildChannel       string
-		BuildCommit        string
-		BuildCreated       int
-		BuildEnqueued      int
-		BuildEvent         string
-		BuildFinished      int
-		BuildHost          string
-		BuildLink          string
-		BuildMessage       string
-		BuildNumber        int
-		BuildParent        int
-		BuildRef           string
-		BuildStarted       int
-		BuildSource        string
-		BuildTag           string
-		BuildTitle         string
-		BuildWorkspace     string
-		RepositoryBranch   string
-		RepoBranch         string
-		RepositoryClone    string
-		RepoClone          string
-		RepositoryFullName string
-		RepoFullName       string
-		RepositoryLink     string
-		RepoLink           string
-		RepositoryName     string
-		RepoName           string
-		RepositoryOrg      string
-		RepoOrg            string
-		RepositoryPrivate  string
-		RepoPrivate        string
-		RepositoryTimeout  int
-		RepoTimeout        int
-		RepositoryTrusted  string
-		RepoTrusted        string
+		BuildAuthor               string
+		BuildAuthorEmail          string
+		BuildAuthorSAMAccountName string
+		BuildBranch               string
+		BuildChannel              string
+		BuildCommit               string
+		BuildCreated              int
+		BuildEnqueued             int
+		BuildEvent                string
+		BuildFinished             int
+		BuildHost                 string
+		BuildLink                 string
+		BuildMessage              string
+		BuildNumber               int
+		BuildParent               int
+		BuildRef                  string
+		BuildStarted              int
+		BuildSource               string
+		BuildTag                  string
+		BuildTitle                string
+		BuildWorkspace            string
+		RepositoryBranch          string
+		RepoBranch                string
+		RepositoryClone           string
+		RepoClone                 string
+		RepositoryFullName        string
+		RepoFullName              string
+		RepositoryLink            string
+		RepoLink                  string
+		RepositoryName            string
+		RepoName                  string
+		RepositoryOrg             string
+		RepoOrg                   string
+		RepositoryPrivate         string
+		RepoPrivate               string
+		RepositoryTimeout         int
+		RepoTimeout               int
+		RepositoryTrusted         string
+		RepoTrusted               string
 	}
 )
 
@@ -191,7 +192,7 @@ func (p *Plugin) Validate() error {
 }
 
 // getAttachmentFromFile function to open and parse json file into
-// slack webhook message payload
+// slack webhook message payload.
 func getAttachmentFromFile(p *Plugin) ([]slack.Attachment, error) {
 	// open the provided json template
 	jsonFile, err := os.Open(p.Path)
