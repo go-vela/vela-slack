@@ -13,7 +13,7 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.8.1
-	github.com/slack-go/slack v0.9.5
+	github.com/slack-go/slack v0.10.0
 	github.com/urfave/cli/v2 v2.3.0
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 )
