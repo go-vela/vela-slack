@@ -220,6 +220,7 @@ func getAttachmentFromFile(p *Plugin) ([]slack.Attachment, error) {
 	bStr = strings.Replace(bStr, "{{ .BuildStarted }}", strconv.Itoa(p.Env.BuildStarted), -1)
 	bStr = strings.Replace(bStr, "{{ .RepositoryTimeout }}", strconv.Itoa(p.Env.RepositoryTimeout), -1)
 	bytes = []byte(bStr)
+
 	logrus.Info("pip")
 	logrus.Info(bStr)
 	logrus.Info("pip")
