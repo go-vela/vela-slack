@@ -26,6 +26,7 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 )
 
+// nolint: funlen // ignore length for main
 func main() {
 	// capture application version information
 	v := version.New()
@@ -426,7 +427,6 @@ func run(c *cli.Context) error {
 
 // Retrieves sAMAccountName from LDAP server using build author's email.
 func getSAMAccountName(c *cli.Context) string {
-
 	// LDAP environment variables
 	email := c.String("build-author-email")
 	username := c.String("ldap-username")
@@ -443,10 +443,12 @@ func getSAMAccountName(c *cli.Context) string {
 	// create LDAP client
 	roots := x509.NewCertPool()
 	caCerts, err := ioutil.ReadFile(c.String("sslcert.path"))
+
 	if err != nil {
 		logrus.Errorf("%s", err)
 		return ""
 	}
+
 	roots.AppendCertsFromPEM(caCerts)
 
 	config := &tls.Config{
@@ -490,5 +492,6 @@ func getSAMAccountName(c *cli.Context) string {
 
 	// return sAMAccountName
 	sAMAccountName := sr.Entries[0].GetAttributeValue("sAMAccountName")
+
 	return sAMAccountName
 }
