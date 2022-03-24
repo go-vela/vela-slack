@@ -8,6 +8,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/http"
+	"net/url"
 	"os"
 
 	"time"
@@ -25,6 +27,10 @@ import (
 
 	_ "github.com/joho/godotenv/autoload"
 )
+
+type GitHubUser struct {
+	Email string
+}
 
 // nolint: funlen // ignore length for main
 func main() {
@@ -323,6 +329,21 @@ func main() {
 			Name:     "ldap-search-base",
 			Usage:    "environment variable for enterprise LDAP search base",
 		},
+
+		// Optional GitHub API config flags
+
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_GITHUB_ACCESS_TOKEN", "GITHUB_ACCESS_TOKEN"},
+			FilePath: string("/vela/parameters/github/token,/vela/secrets/github/token"),
+			Name:     "github-access-token",
+			Usage:    "environment variable for GitHub access token",
+		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_GITHUB_USERNAME", "GITHUB_USERNAME"},
+			FilePath: string("/vela/parameters/github/username,/vela/secrets/github/username"),
+			Name:     "github-username",
+			Usage:    "environment variable for GitHub username",
+		},
 	}
 
 	err = app.Run(os.Args)
@@ -440,6 +461,11 @@ func getSAMAccountName(c *cli.Context) string {
 		return ""
 	}
 
+	// look up the build author's email address if it wasn't provided in the GitHub event
+	if email == "" {
+		email = getUserEmail(c)
+	}
+
 	// create LDAP client
 	roots := x509.NewCertPool()
 	caCerts, err := ioutil.ReadFile(c.String("sslcert.path"))
@@ -494,4 +520,51 @@ func getSAMAccountName(c *cli.Context) string {
 	sAMAccountName := sr.Entries[0].GetAttributeValue("sAMAccountName")
 
 	return sAMAccountName
+}
+
+func getUserEmail(c *cli.Context) string {
+	buildSource := c.String("build-source")
+	buildAuthor := c.String("build-author")
+	githubUsername := c.String("github-username")
+	githubAccessToken := c.String("github-access-token")
+
+	if githubUsername == "" || githubAccessToken == "" {
+		return ""
+	}
+
+	parsedUrl, err := url.Parse(buildSource)
+	if err != nil {
+		logrus.Errorf("unable to parse build source as URL: %s", err)
+		return ""
+	}
+
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s://%s/api/v3/users/%s", parsedUrl.Scheme, parsedUrl.Host, buildAuthor), nil)
+	if err != nil {
+		logrus.Errorf("unable to create GitHub API request: %s", err)
+		return ""
+	}
+	req.SetBasicAuth(githubUsername, githubAccessToken)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		logrus.Errorf("unable to fetch email address from GitHub: %s", err)
+		return ""
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read GitHub API response: %s", err)
+		return ""
+	}
+
+	var user GitHubUser
+	err = json.Unmarshal([]byte(body), &user)
+	if err != nil {
+		logrus.Errorf("unable to unmarshal GitHub API response: %s", err)
+		return ""
+	}
+
+	return user.Email
 }
