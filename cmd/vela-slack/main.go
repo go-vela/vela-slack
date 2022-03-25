@@ -5,6 +5,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -532,20 +533,24 @@ func getUserEmail(c *cli.Context) string {
 		return ""
 	}
 
-	parsedUrl, err := url.Parse(buildSource)
+	parsedURL, err := url.Parse(buildSource)
 	if err != nil {
 		logrus.Errorf("unable to parse build source as URL: %s", err)
 		return ""
 	}
 
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s://%s/api/v3/users/%s", parsedUrl.Scheme, parsedUrl.Host, buildAuthor), nil)
+	ctx := context.Background()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("%s://%s/api/v3/users/%s", parsedURL.Scheme, parsedURL.Host, buildAuthor), nil)
 	if err != nil {
 		logrus.Errorf("unable to create GitHub API request: %s", err)
 		return ""
 	}
+
 	req.SetBasicAuth(githubUsername, githubAccessToken)
 
 	client := &http.Client{}
+
 	resp, err := client.Do(req)
 	if err != nil {
 		logrus.Errorf("unable to fetch email address from GitHub: %s", err)
@@ -553,6 +558,7 @@ func getUserEmail(c *cli.Context) string {
 	}
 
 	defer resp.Body.Close()
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read GitHub API response: %s", err)
@@ -560,7 +566,8 @@ func getUserEmail(c *cli.Context) string {
 	}
 
 	var user GitHubUser
-	err = json.Unmarshal([]byte(body), &user)
+
+	err = json.Unmarshal(body, &user)
 	if err != nil {
 		logrus.Errorf("unable to unmarshal GitHub API response: %s", err)
 		return ""
