@@ -6,7 +6,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.1.1
 	github.com/Masterminds/sprig/v3 v3.2.2
 	github.com/go-ldap/ldap/v3 v3.4.3
-	github.com/go-vela/types v0.13.0
+	github.com/go-vela/types v0.14.0
 	github.com/joho/godotenv v1.4.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/slack-go/slack v0.10.3
