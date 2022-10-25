@@ -355,7 +355,7 @@ func run(c *cli.Context) error {
 
 	logrus.WithFields(logrus.Fields{
 		"code":     "https://github.com/go-vela/vela-slack",
-		"docs":     "https://go-vela.github.io/docs/plugins/registry/slack",
+		"docs":     "https://go-vela.github.io/docs/plugins/registry/pipeline/slack",
 		"registry": "https://hub.docker.com/r/target/vela-slack",
 	}).Info("Vela Slack Plugin")
 
