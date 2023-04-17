@@ -3,7 +3,7 @@ module github.com/go-vela/vela-slack
 go 1.18
 
 require (
-	github.com/Masterminds/semver/v3 v3.1.1
+	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/Masterminds/sprig/v3 v3.2.2
 	github.com/go-ldap/ldap/v3 v3.4.4
 	github.com/go-vela/types v0.17.0
