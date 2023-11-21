@@ -92,6 +92,12 @@ func main() {
 			Name:     "webhook",
 			Usage:    "slack webhook used to post log messages to channel",
 		},
+		&cli.BoolFlag{
+			EnvVars:  []string{"PARAMETER_REMOTE", "SLACK_REMOTE"},
+			FilePath: "/vela/parameters/slack/remote,/vela/secrets/slack/remote",
+			Name:     "remote",
+			Usage:    "if filepath is remote or not",
+		},
 
 		// Webhook Flags
 
@@ -289,6 +295,14 @@ func main() {
 			Usage:   "environment variable reference for reading in repository trusted",
 		},
 
+		// Registry
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_REGISTRY", "REGISTRY_URL"},
+			FilePath: "/vela/parameters/slack/registry-url,/vela/secrets/slack/registry-url",
+			Name:     "registry-url",
+			Usage:    "registry url",
+		},
+
 		// Optional LDAP config flags
 
 		&cli.StringFlag{
@@ -320,6 +334,12 @@ func main() {
 			FilePath: string("/vela/parameters/ldap/searchbase,/vela/secrets/ldap/searchbase"),
 			Name:     "ldap-search-base",
 			Usage:    "environment variable for enterprise LDAP search base",
+		},
+		&cli.StringFlag{
+			EnvVars:  []string{"PARAMETER_TOKEN", "GITHUB_TOKEN"},
+			FilePath: "/vela/parameters/slack/token,/vela/secrets/slack/token",
+			Name:     "token",
+			Usage:    "github token from user",
 		},
 	}
 
@@ -370,6 +390,7 @@ func run(c *cli.Context) error {
 			Text:            c.String("text"),
 			Parse:           c.String("parse"),
 		},
+		Remote: c.Bool("remote"),
 		Env: &Env{
 			BuildAuthor:               c.String("build-author"),
 			BuildAuthorEmail:          c.String("build-author-email"),
@@ -392,6 +413,7 @@ func run(c *cli.Context) error {
 			BuildTag:                  c.String("build-tag"),
 			BuildTitle:                c.String("build-title"),
 			BuildWorkspace:            c.String("build-workspace"),
+			RegistryURL:               c.String("registry-url"),
 			RepositoryBranch:          c.String("repo-branch"),
 			RepoBranch:                c.String("repo-branch"),
 			RepositoryClone:           c.String("repo-clone"),
@@ -410,6 +432,7 @@ func run(c *cli.Context) error {
 			RepoTimeout:               c.Int("repo-timeout"),
 			RepositoryTrusted:         c.String("repo-trusted"),
 			RepoTrusted:               c.String("repo-trusted"),
+			Token:                     c.String("token"),
 		},
 	}
 

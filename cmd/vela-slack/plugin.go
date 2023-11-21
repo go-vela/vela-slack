@@ -13,6 +13,8 @@ import (
 	"strings"
 	"text/template"
 
+	registry "github.com/go-vela/server/compiler/registry/github"
+
 	"github.com/Masterminds/sprig/v3"
 	"github.com/sirupsen/logrus"
 	"github.com/slack-go/slack"
@@ -26,6 +28,7 @@ type (
 		Env        *Env
 		Path       string
 		WebhookMsg *slack.WebhookMessage
+		Remote     bool
 	}
 
 	// Env struct represents the environment variables the Vela injects
@@ -52,6 +55,7 @@ type (
 		BuildTag                  string
 		BuildTitle                string
 		BuildWorkspace            string
+		RegistryURL               string
 		RepositoryBranch          string
 		RepoBranch                string
 		RepositoryClone           string
@@ -70,11 +74,16 @@ type (
 		RepoTimeout               int
 		RepositoryTrusted         string
 		RepoTrusted               string
+		Token                     string
 	}
 )
 
 // Exec formats and runs the commands for sending a message via Slack.
 func (p *Plugin) Exec() error {
+	var (
+		attachments []slack.Attachment
+		err         error
+	)
 	logrus.Debug("running plugin with provided configuration")
 
 	// clean up newlines that could invalidate JSON
@@ -95,8 +104,13 @@ func (p *Plugin) Exec() error {
 
 	// parse the slack message file
 	if len(p.Path) != 0 {
-		logrus.Infof("Parsing provided template file %s, ", p.Path)
-		attachments, err := getAttachmentFromFile(p)
+		logrus.Infof("Parsing provided template file, %s", p.Path)
+		if p.Remote {
+			attachments, err = getRemoteAttachment(p)
+
+		} else {
+			attachments, err = getAttachmentFromFile(p)
+		}
 
 		if err != nil {
 			return fmt.Errorf("unable to parse attachment file: %w", err)
@@ -204,6 +218,66 @@ func getAttachmentFromFile(p *Plugin) ([]slack.Attachment, error) {
 	bytes, err := ioutil.ReadAll(jsonFile)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read json file: %w", err)
+	}
+
+	// Converts bytes into string and replaces {{ .BuildCreated }}
+	// with a timestamp before returning it back into bytes again.
+	bStr := string(bytes)
+	// x := strconv.Itoa(p.Env.BuildCreated)
+	bStr = strings.Replace(bStr, "{{ .BuildCreated }}", strconv.Itoa(p.Env.BuildCreated), -1)
+	bStr = strings.Replace(bStr, "{{ .BuildEnqueued }}", strconv.Itoa(p.Env.BuildEnqueued), -1)
+	bStr = strings.Replace(bStr, "{{ .BuildFinished }}", strconv.Itoa(p.Env.BuildFinished), -1)
+	bStr = strings.Replace(bStr, "{{ .BuildNumber }}", strconv.Itoa(p.Env.BuildNumber), -1)
+	bStr = strings.Replace(bStr, "{{ .BuildParent }}", strconv.Itoa(p.Env.BuildParent), -1)
+	bStr = strings.Replace(bStr, "{{ .BuildStarted }}", strconv.Itoa(p.Env.BuildStarted), -1)
+	bStr = strings.Replace(bStr, "{{ .RepositoryTimeout }}", strconv.Itoa(p.Env.RepositoryTimeout), -1)
+	bytes = []byte(bStr)
+
+	logrus.Info("pip")
+	logrus.Info(bStr)
+	logrus.Info("pip")
+	// create a variable to hold our message
+	var msg slack.WebhookMessage
+
+	// cast bytes to go struct
+	err = json.Unmarshal(bytes, &msg)
+	if err != nil {
+		return nil, fmt.Errorf("unable to unmarshal json file: %w", err)
+	}
+
+	return msg.Attachments, err
+}
+
+// getRemoteAttachment function to open and parse json file into
+// slack webhook message payload.
+func getRemoteAttachment(p *Plugin) ([]slack.Attachment, error) {
+	var (
+		bytes []byte
+		err   error
+	)
+
+	reg, err := registry.New(p.Env.RegistryURL, p.Env.Token)
+	if err != nil {
+		return nil, err
+	}
+
+	// parse source from slack attachment
+	src, err := reg.Parse(p.Path)
+	if err != nil {
+		return nil, fmt.Errorf("invalid slack attachment source provided: %w", err)
+	}
+
+	logrus.WithFields(logrus.Fields{
+		"org":  src.Org,
+		"repo": src.Repo,
+		"path": src.Name,
+		"host": src.Host,
+	}).Tracef("Using authenticated GitHub client to pull template")
+
+	// use private (authenticated) github instance to pull from
+	bytes, err = reg.Template(nil, src)
+	if err != nil {
+		return nil, err
 	}
 
 	// Converts bytes into string and replaces {{ .BuildCreated }}
