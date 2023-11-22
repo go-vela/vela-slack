@@ -1,0 +1,18 @@
+{
+    "type": "file",
+    "encoding": "base64",
+    "size": 5362,
+    "name": "slack_attachment.json",
+    "path": "slack_attachment.json",
+    "content": "",
+    "sha": "3d21ec53a331a6f037a91c368710b99387d012c1",
+    "url": "https://api.github.com/repos/octokit/octokit.rb/contents/slack_attachment.json",
+    "git_url": "https://api.github.com/repos/octokit/octokit.rb/git/blobs/3d21ec53a331a6f037a91c368710b99387d012c1",
+    "html_url": "https://github.com/octokit/octokit.rb/blob/main/slack_attachment.json",
+    "download_url": "https://raw.githubusercontent.com/octokit/octokit.rb/main/slack_attachment.json",
+    "_links": {
+      "git": "https://api.github.com/repos/octokit/octokit.rb/git/blobs/3d21ec53a331a6f037a91c368710b99387d012c1",
+      "self": "https://api.github.com/repos/octokit/octokit.rb/contents/slack_attachment.json",
+      "html": "https://github.com/octokit/octokit.rb/blob/main/slack_attachment.json"
+    }
+  }

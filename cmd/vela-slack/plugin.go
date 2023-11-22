@@ -6,7 +6,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"regexp"
 	"strconv"
@@ -215,7 +215,7 @@ func getAttachmentFromFile(p *Plugin) ([]slack.Attachment, error) {
 	defer jsonFile.Close()
 
 	// read the contents of the json template
-	bytes, err := ioutil.ReadAll(jsonFile)
+	bytes, err := io.ReadAll(jsonFile)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read json file: %w", err)
 	}
