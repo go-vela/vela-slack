@@ -204,6 +204,25 @@ func (p *Plugin) Validate() error {
 	return nil
 }
 
+// getRemoteAttachment function to open and parse slack attachment json file into
+// slack webhook message payload.
+func replaceString(bytes []byte, p *Plugin) []byte {
+	// Converts bytes into string and replaces {{ .BuildCreated }}
+	// with a timestamp before returning it back into bytes again.
+	bStr := string(bytes)
+	// x := strconv.Itoa(p.Env.BuildCreated)
+	bStr = strings.ReplaceAll(bStr, "{{ .BuildCreated }}", strconv.Itoa(p.Env.BuildCreated))
+	bStr = strings.ReplaceAll(bStr, "{{ .BuildEnqueued }}", strconv.Itoa(p.Env.BuildEnqueued))
+	bStr = strings.ReplaceAll(bStr, "{{ .BuildFinished }}", strconv.Itoa(p.Env.BuildFinished))
+	bStr = strings.ReplaceAll(bStr, "{{ .BuildNumber }}", strconv.Itoa(p.Env.BuildNumber))
+	bStr = strings.ReplaceAll(bStr, "{{ .BuildParent }}", strconv.Itoa(p.Env.BuildParent))
+	bStr = strings.ReplaceAll(bStr, "{{ .BuildStarted }}", strconv.Itoa(p.Env.BuildStarted))
+	bStr = strings.ReplaceAll(bStr, "{{ .RepositoryTimeout }}", strconv.Itoa(p.Env.RepositoryTimeout))
+	bytes = []byte(bStr)
+
+	return bytes
+}
+
 // getAttachmentFromFile function to open and parse json file into
 // slack webhook message payload.
 func getAttachmentFromFile(p *Plugin) ([]slack.Attachment, error) {
@@ -221,18 +240,7 @@ func getAttachmentFromFile(p *Plugin) ([]slack.Attachment, error) {
 		return nil, fmt.Errorf("unable to read json file: %w", err)
 	}
 
-	// Converts bytes into string and replaces {{ .BuildCreated }}
-	// with a timestamp before returning it back into bytes again.
-	bStr := string(bytes)
-	// x := strconv.Itoa(p.Env.BuildCreated)
-	bStr = strings.Replace(bStr, "{{ .BuildCreated }}", strconv.Itoa(p.Env.BuildCreated), -1)
-	bStr = strings.Replace(bStr, "{{ .BuildEnqueued }}", strconv.Itoa(p.Env.BuildEnqueued), -1)
-	bStr = strings.Replace(bStr, "{{ .BuildFinished }}", strconv.Itoa(p.Env.BuildFinished), -1)
-	bStr = strings.Replace(bStr, "{{ .BuildNumber }}", strconv.Itoa(p.Env.BuildNumber), -1)
-	bStr = strings.Replace(bStr, "{{ .BuildParent }}", strconv.Itoa(p.Env.BuildParent), -1)
-	bStr = strings.Replace(bStr, "{{ .BuildStarted }}", strconv.Itoa(p.Env.BuildStarted), -1)
-	bStr = strings.Replace(bStr, "{{ .RepositoryTimeout }}", strconv.Itoa(p.Env.RepositoryTimeout), -1)
-	bytes = []byte(bStr)
+	bytes = replaceString(bytes, p)
 
 	// create a variable to hold our message
 	var msg slack.WebhookMessage
@@ -278,18 +286,7 @@ func getRemoteAttachment(p *Plugin) ([]slack.Attachment, error) {
 		return nil, err
 	}
 
-	// Converts bytes into string and replaces {{ .BuildCreated }}
-	// with a timestamp before returning it back into bytes again.
-	bStr := string(bytes)
-	// x := strconv.Itoa(p.Env.BuildCreated)
-	bStr = strings.Replace(bStr, "{{ .BuildCreated }}", strconv.Itoa(p.Env.BuildCreated), -1)
-	bStr = strings.Replace(bStr, "{{ .BuildEnqueued }}", strconv.Itoa(p.Env.BuildEnqueued), -1)
-	bStr = strings.Replace(bStr, "{{ .BuildFinished }}", strconv.Itoa(p.Env.BuildFinished), -1)
-	bStr = strings.Replace(bStr, "{{ .BuildNumber }}", strconv.Itoa(p.Env.BuildNumber), -1)
-	bStr = strings.Replace(bStr, "{{ .BuildParent }}", strconv.Itoa(p.Env.BuildParent), -1)
-	bStr = strings.Replace(bStr, "{{ .BuildStarted }}", strconv.Itoa(p.Env.BuildStarted), -1)
-	bStr = strings.Replace(bStr, "{{ .RepositoryTimeout }}", strconv.Itoa(p.Env.RepositoryTimeout), -1)
-	bytes = []byte(bStr)
+	bytes = replaceString(bytes, p)
 
 	// create a variable to hold our message
 	var msg slack.WebhookMessage
