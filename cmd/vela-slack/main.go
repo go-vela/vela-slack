@@ -5,7 +5,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"time"
@@ -463,7 +462,7 @@ func getSAMAccountName(c *cli.Context) string {
 
 	// create LDAP client
 	roots := x509.NewCertPool()
-	caCerts, err := ioutil.ReadFile(c.String("sslcert.path"))
+	caCerts, err := os.ReadFile(c.String("sslcert.path"))
 
 	if err != nil {
 		logrus.Errorf("%s", err)
