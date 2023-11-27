@@ -23,7 +23,7 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 )
 
-//nolint: funlen // ignore length for main
+//nolint:funlen // ignore length for main
 func main() {
 	// capture application version information
 	v := version.New()
