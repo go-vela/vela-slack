@@ -116,7 +116,11 @@ func TestSlack_Plugin_Exec_Remote_Attachment(t *testing.T) {
 		if err != nil {
 			t.Errorf("ReadFile error: %v", err)
 		}
-		w.Write(bytes)
+		_, err = w.Write(bytes)
+		if err != nil {
+			t.Errorf("Write error: %v", err)
+		}
+
 		w.WriteHeader(http.StatusOK)
 	}))
 	defer ta.Close()
@@ -171,7 +175,11 @@ func TestSlack_Plugin_Exec_Bad_Remote_Attachment_Parse(t *testing.T) {
 		if err != nil {
 			t.Errorf("ReadFile error: %v", err)
 		}
-		w.Write(bytes)
+		_, err = w.Write(bytes)
+		if err != nil {
+			t.Errorf("Write error: %v", err)
+		}
+
 		w.WriteHeader(http.StatusOK)
 	}))
 	defer ta.Close()
@@ -205,7 +213,12 @@ func TestSlack_Plugin_Exec_Bad_Remote_Attachment(t *testing.T) {
 		if err != nil {
 			t.Errorf("ReadFile error: %v", err)
 		}
-		w.Write(bytes)
+
+		_, err = w.Write(bytes)
+		if err != nil {
+			t.Errorf("Write error: %v", err)
+		}
+
 		w.WriteHeader(http.StatusOK)
 	}))
 	defer ta.Close()
@@ -239,7 +252,12 @@ func TestSlack_Plugin_Exec_Bad_Remote_Attachment_Unmarshal(t *testing.T) {
 		if err != nil {
 			t.Errorf("ReadFile error: %v", err)
 		}
-		w.Write(bytes)
+
+		_, err = w.Write(bytes)
+		if err != nil {
+			t.Errorf("Write error: %v", err)
+		}
+
 		w.WriteHeader(http.StatusOK)
 	}))
 	defer ta.Close()

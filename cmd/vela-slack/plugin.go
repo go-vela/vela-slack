@@ -84,6 +84,7 @@ func (p *Plugin) Exec() error {
 		attachments []slack.Attachment
 		err         error
 	)
+
 	logrus.Debug("running plugin with provided configuration")
 
 	// clean up newlines that could invalidate JSON
@@ -105,9 +106,9 @@ func (p *Plugin) Exec() error {
 	// parse the slack message file
 	if len(p.Path) != 0 {
 		logrus.Infof("Parsing provided template file, %s", p.Path)
+
 		if p.Remote {
 			attachments, err = getRemoteAttachment(p)
-
 		} else {
 			attachments, err = getAttachmentFromFile(p)
 		}
