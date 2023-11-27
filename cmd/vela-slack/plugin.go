@@ -210,7 +210,6 @@ func replaceString(bytes []byte, p *Plugin) []byte {
 	// Converts bytes into string and replaces {{ .BuildCreated }}
 	// with a timestamp before returning it back into bytes again.
 	bStr := string(bytes)
-	// x := strconv.Itoa(p.Env.BuildCreated)
 	bStr = strings.ReplaceAll(bStr, "{{ .BuildCreated }}", strconv.Itoa(p.Env.BuildCreated))
 	bStr = strings.ReplaceAll(bStr, "{{ .BuildEnqueued }}", strconv.Itoa(p.Env.BuildEnqueued))
 	bStr = strings.ReplaceAll(bStr, "{{ .BuildFinished }}", strconv.Itoa(p.Env.BuildFinished))
