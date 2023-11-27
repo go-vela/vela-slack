@@ -249,7 +249,7 @@ func getAttachmentFromFile(p *Plugin) ([]slack.Attachment, error) {
 	return msg.Attachments, err
 }
 
-// getRemoteAttachment function to open and parse json file into
+// getRemoteAttachment function to open and parse slack attachment json file into
 // slack webhook message payload.
 func getRemoteAttachment(p *Plugin) ([]slack.Attachment, error) {
 	var (
