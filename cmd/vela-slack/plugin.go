@@ -234,9 +234,6 @@ func getAttachmentFromFile(p *Plugin) ([]slack.Attachment, error) {
 	bStr = strings.Replace(bStr, "{{ .RepositoryTimeout }}", strconv.Itoa(p.Env.RepositoryTimeout), -1)
 	bytes = []byte(bStr)
 
-	logrus.Info("pip")
-	logrus.Info(bStr)
-	logrus.Info("pip")
 	// create a variable to hold our message
 	var msg slack.WebhookMessage
 
@@ -294,9 +291,6 @@ func getRemoteAttachment(p *Plugin) ([]slack.Attachment, error) {
 	bStr = strings.Replace(bStr, "{{ .RepositoryTimeout }}", strconv.Itoa(p.Env.RepositoryTimeout), -1)
 	bytes = []byte(bStr)
 
-	logrus.Info("pip")
-	logrus.Info(bStr)
-	logrus.Info("pip")
 	// create a variable to hold our message
 	var msg slack.WebhookMessage
 
