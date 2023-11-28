@@ -37,7 +37,7 @@ steps:
 +     text: "Hello Repo {{ .RepositoryName }}!"
 ```
 
-Sample of sending a message with attachment file:
+Sample of sending a message with local attachment file:
 
 ```diff
 steps:
@@ -47,6 +47,22 @@ steps:
     parameters:
 -     text: "Hello World!"
       filepath: slack_attachment.json
+      remote: false
+      registry: https://github.com
+```
+
+Sample of sending a message with remote attachment file:
+
+```diff
+steps:
+  - name: message-with-remote-attachment
+    image: target/vela-slack:latest
+    secrets: [ webhook ]
+    parameters:
+-     text: "Hello World!"
+      filepath: slack_attachment.json
+      remote: true
+      registry: https://github.com
 ```
 
 content of `slack_attachment.json`:

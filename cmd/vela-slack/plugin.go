@@ -204,11 +204,9 @@ func (p *Plugin) Validate() error {
 	return nil
 }
 
-// getRemoteAttachment function to open and parse slack attachment json file into
-// slack webhook message payload.
+// getRemoteAttachment function converts bytes into string and replaces variables
+// such as {{ .BuildCreated }} with a correct values before returning it back into bytes again.
 func replaceString(bytes []byte, p *Plugin) []byte {
-	// Converts bytes into string and replaces {{ .BuildCreated }}
-	// with a timestamp before returning it back into bytes again.
 	bStr := string(bytes)
 	bStr = strings.ReplaceAll(bStr, "{{ .BuildCreated }}", strconv.Itoa(p.Env.BuildCreated))
 	bStr = strings.ReplaceAll(bStr, "{{ .BuildEnqueued }}", strconv.Itoa(p.Env.BuildEnqueued))
