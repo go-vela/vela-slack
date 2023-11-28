@@ -204,7 +204,7 @@ func (p *Plugin) Validate() error {
 	return nil
 }
 
-// getRemoteAttachment function converts bytes into string and replaces variables
+// replaceString function converts bytes into string and replaces variables
 // such as {{ .BuildCreated }} with a correct values before returning it back into bytes again.
 func replaceString(bytes []byte, p *Plugin) []byte {
 	bStr := string(bytes)
