@@ -1,0 +1,18 @@
+{
+    "type": "file",
+    "encoding": "base64",
+    "size": 5362,
+    "name": "slack_attachment.json",
+    "path": "slack_attachment.json",
+    "content": "ewogICAgImF0dGFjaG1lbnRzIjogWwogICAgICAgIHsKICAgICAgICAgICAgImZhbGxiYWNrIjogIlJlcXVpcmVkIHBsYWluLXRleHQgc3VtbWFyeSBvZiB0aGUgYXR0YWNobWVudC4iLAogICAgICAgICAgICAiY29sb3IiOiAiIzM2YTY0ZiIsCiAgICAgICAgICAgICJwcmV0ZXh0IjogIk9wdGlvbmFsIHRleHQgdGhhdCBhcHBlYXJzIGFib3ZlIHRoZSBhdHRhY2htZW50IGJsb2NrIiwKICAgICAgICAgICAgImF1dGhvcl9uYW1lIjogIkJvYmJ5IFRhYmxlcyIsCiAgICAgICAgICAgICJhdXRob3JfbGluayI6ICJodHRwOi8vZmxpY2tyLmNvbS9ib2JieS8iLAogICAgICAgICAgICAiYXV0aG9yX2ljb24iOiAiaHR0cDovL2ZsaWNrci5jb20vaWNvbnMvYm9iYnkuanBnIiwKICAgICAgICAgICAgInRpdGxlIjogIlNsYWNrIEFQSSBEb2N1bWVudGF0aW9uIiwKICAgICAgICAgICAgInRpdGxlX2xpbmsiOiAiaHR0cHM6Ly9hcGkuc2xhY2suY29tLyIsCiAgICAgICAgICAgICJ0ZXh0IjogIkJ1aWxkIE1lc3NhZ2U6IHt7IC5CdWlsZE1lc3NhZ2UgfX0iLAogICAgICAgICAgICAiZmllbGRzIjogWwogICAgICAgICAgICAgICAgewogICAgICAgICAgICAgICAgICAgICJ0aXRsZSI6ICJQcmlvcml0eSIsCiAgICAgICAgICAgICAgICAgICAgInZhbHVlIjogIkhpZ2giLAogICAgICAgICAgICAgICAgICAgICJzaG9ydCI6IGZhbHNlCiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIF0sCiAgICAgICAgICAgICJpbWFnZV91cmwiOiAiaHR0cDovL215LXdlYnNpdGUuY29tL3BhdGgvdG8vaW1hZ2UuanBnIiwKICAgICAgICAgICAgInRodW1iX3VybCI6ICJodHRwOi8vZXhhbXBsZS5jb20vcGF0aC90by90aHVtYi5wbmciLAogICAgICAgICAgICAiZm9vdGVyIjogIlNsYWNrIEFQSSIsCiAgICAgICAgICAgICJmb290ZXJfaWNvbiI6ICJodHRwczovL3BsYXRmb3JtLnNsYWNrLWVkZ2UuY29tL2ltZy9kZWZhdWx0X2FwcGxpY2F0aW9uX2ljb24ucG5nIiwKICAgICAgICAgICAgInRzIjogInt7IC5CdWlsZENyZWF0ZWQgfX0iCiAgICAgICAgfQogICAgXQp9",
+    "sha": "3d21ec53a331a6f037a91c368710b99387d012c1",
+    "url": "https://api.github.com/repos/octokit/octokit.rb/contents/slack_attachment.json",
+    "git_url": "https://api.github.com/repos/octokit/octokit.rb/git/blobs/3d21ec53a331a6f037a91c368710b99387d012c1",
+    "html_url": "https://github.com/octokit/octokit.rb/blob/main/slack_attachment.json",
+    "download_url": "https://raw.githubusercontent.com/octokit/octokit.rb/main/slack_attachment.json",
+    "_links": {
+      "git": "https://api.github.com/repos/octokit/octokit.rb/git/blobs/3d21ec53a331a6f037a91c368710b99387d012c1",
+      "self": "https://api.github.com/repos/octokit/octokit.rb/contents/slack_attachment.json",
+      "html": "https://github.com/octokit/octokit.rb/blob/main/slack_attachment.json"
+    }
+  }
