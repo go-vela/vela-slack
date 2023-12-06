@@ -48,7 +48,6 @@ steps:
 -     text: "Hello World!"
       filepath: slack_attachment.json
       remote: false
-      registry: https://github.com
 ```
 
 Sample of sending a message with remote attachment file:
