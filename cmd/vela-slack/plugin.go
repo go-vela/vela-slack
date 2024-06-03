@@ -50,6 +50,7 @@ type (
 		BuildNumber               int
 		BuildParent               int
 		BuildRef                  string
+		BuildSender               string
 		BuildStarted              int
 		BuildSource               string
 		BuildTag                  string

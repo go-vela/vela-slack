@@ -220,6 +220,11 @@ func main() {
 			Name:    "build-ref",
 			Usage:   "environment variable reference for reading in build ref",
 		},
+		&cli.StringFlag{
+			EnvVars: []string{"VELA_BUILD_SENDER", "BUILD_SENDER"},
+			Name:    "build-sender",
+			Usage:   "environment variable reference for reading in build sender",
+		},
 		&cli.IntFlag{
 			EnvVars: []string{"VELA_BUILD_STARTED", "BUILD_STARTED"},
 			Name:    "build-started",
@@ -407,6 +412,7 @@ func run(c *cli.Context) error {
 			BuildNumber:               c.Int("build-number"),
 			BuildParent:               c.Int("build-parent"),
 			BuildRef:                  c.String("build-ref"),
+			BuildSender:               c.String("build-sender"),
 			BuildStarted:              c.Int("build-started"),
 			BuildSource:               c.String("build-source"),
 			BuildTag:                  c.String("build-tag"),
