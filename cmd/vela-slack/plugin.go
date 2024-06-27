@@ -189,8 +189,8 @@ func (p *Plugin) Exec() error {
 
 func cleanBuildMessage(buildMessage string) string {
 	subject := buildMessage
-	subject = strings.Replace(subject, "\n", "\\n", -1)
-	subject = strings.Replace(subject, "\"", "\\\"", -1)
+	subject = strings.ReplaceAll(subject, "\n", "\\n")
+	subject = strings.ReplaceAll(subject, "\"", "\\\"")
 	return subject
 }
 
