@@ -191,6 +191,7 @@ func cleanBuildMessage(buildMessage string) string {
 	subject := buildMessage
 	subject = strings.ReplaceAll(subject, "\n", "\\n")
 	subject = strings.ReplaceAll(subject, "\"", "\\\"")
+
 	return subject
 }
 
