@@ -328,6 +328,29 @@ Newlines`,
 	}
 }
 
+func TestSlack_Plugin_Exec_Quote(t *testing.T) {
+	// setup types
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "ok")
+	}))
+	defer ts.Close()
+
+	p := &Plugin{
+		Webhook: ts.URL,
+		Env: &Env{
+			BuildMessage: `This message has "quotes"`,
+		},
+		Path:       "testdata/slack_attachment.json",
+		WebhookMsg: &slack.WebhookMessage{},
+		Remote:     false,
+	}
+
+	err := p.Exec()
+	if err != nil {
+		t.Errorf("Exec returned err: %v", err)
+	}
+}
+
 func TestSlack_Plugin_Exec_Newline_Embedded(t *testing.T) {
 	// setup types
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

@@ -91,7 +91,7 @@ func (p *Plugin) Exec() error {
 	// clean up newlines that could invalidate JSON
 	// BuildMessage is the only field that can have newlines;
 	// typically when the commit contains a title and body message
-	p.Env.BuildMessage = strings.Replace(p.Env.BuildMessage, "\n", "\\n", -1)
+	p.Env.BuildMessage = cleanBuildMessage(p.Env.BuildMessage)
 
 	// create message struct file Slack
 	msg := slack.WebhookMessage{
@@ -185,6 +185,14 @@ func (p *Plugin) Exec() error {
 	logrus.Info("Plugin finished...")
 
 	return nil
+}
+
+func cleanBuildMessage(buildMessage string) string {
+	subject := buildMessage
+	subject = strings.ReplaceAll(subject, "\n", "\\n")
+	subject = strings.ReplaceAll(subject, "\"", "\\\"")
+
+	return subject
 }
 
 // Validate function to validate plugin configuration.
