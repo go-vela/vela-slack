@@ -4,6 +4,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -268,7 +269,9 @@ func getRemoteAttachment(p *Plugin) ([]slack.Attachment, error) {
 		err   error
 	)
 
-	reg, err := registry.New(p.Env.RegistryURL, p.Env.Token)
+	ctx := context.Background()
+
+	reg, err := registry.New(ctx, p.Env.RegistryURL, p.Env.Token)
 	if err != nil {
 		return nil, err
 	}
@@ -287,7 +290,7 @@ func getRemoteAttachment(p *Plugin) ([]slack.Attachment, error) {
 	}).Tracef("Using authenticated GitHub client to pull template")
 
 	// use private (authenticated) github instance to pull from
-	bytes, err = reg.Template(nil, src)
+	bytes, err = reg.Template(ctx, nil, src)
 	if err != nil {
 		return nil, err
 	}
