@@ -43,7 +43,7 @@ Sample of sending a message with local attachment file:
 steps:
   - name: message-with-attachment
     image: target/vela-slack:latest
-    secrets: [ webhook ]
+    secrets: [ slack_webhook ]
     parameters:
 -     text: "Hello World!"
       filepath: slack_attachment.json
@@ -56,7 +56,7 @@ Sample of sending a message with remote attachment file:
 steps:
   - name: message-with-remote-attachment
     image: target/vela-slack:latest
-    secrets: [ webhook ]
+    secrets: [ slack_webhook ]
     parameters:
 -     text: "Hello World!"
       filepath: slack_attachment.json
