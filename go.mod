@@ -2,7 +2,7 @@ module github.com/go-vela/vela-slack
 
 go 1.23.5
 
-toolchain go1.23.6
+toolchain go1.24.0
 
 require (
 	github.com/Masterminds/semver/v3 v3.3.1
