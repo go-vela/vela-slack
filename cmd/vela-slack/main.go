@@ -3,24 +3,21 @@
 package main
 
 import (
+	"crypto/tls"
+	"crypto/x509"
 	"encoding/json"
 	"fmt"
 	"os"
-
 	"time"
 
-	"github.com/go-vela/vela-slack/version"
-	"github.com/slack-go/slack"
-
+	"github.com/go-ldap/ldap/v3"
 	"github.com/sirupsen/logrus"
+	"github.com/slack-go/slack"
 	"github.com/urfave/cli/v2"
 
-	"crypto/tls"
-	"crypto/x509"
-
-	"github.com/go-ldap/ldap/v3"
-
 	_ "github.com/joho/godotenv/autoload"
+
+	"github.com/go-vela/vela-slack/version"
 )
 
 //nolint:funlen // ignore length for main
@@ -62,7 +59,6 @@ func main() {
 	// Plugin Flags
 
 	app.Flags = []cli.Flag{
-
 		&cli.StringFlag{
 			EnvVars:  []string{"PARAMETER_LOG_LEVEL", "SLACK_LOG_LEVEL"},
 			FilePath: "/vela/parameters/slack/log_level,/vela/secrets/slack/log_level",
@@ -468,8 +464,8 @@ func getSAMAccountName(c *cli.Context) string {
 
 	// create LDAP client
 	roots := x509.NewCertPool()
-	caCerts, err := os.ReadFile(c.String("sslcert.path"))
 
+	caCerts, err := os.ReadFile(c.String("sslcert.path"))
 	if err != nil {
 		logrus.Errorf("%s", err)
 		return ""
@@ -477,19 +473,26 @@ func getSAMAccountName(c *cli.Context) string {
 
 	roots.AppendCertsFromPEM(caCerts)
 
-	config := &tls.Config{
+	configTLS := &tls.Config{
 		MinVersion: tls.VersionTLS12,
 		ServerName: ldapServer,
 		RootCAs:    roots,
 	}
 
-	l, err := ldap.DialTLS("tcp", fmt.Sprintf("%s:%s", ldapServer, ldapPort), config)
+	l, err := ldap.DialURL(fmt.Sprintf("%s:%s", ldapServer, ldapPort))
+	if err != nil {
+		logrus.Errorf("%s", err)
+		return ""
+	}
+	defer l.Close()
+
+	err = l.Bind(username, password)
 	if err != nil {
 		logrus.Errorf("%s", err)
 		return ""
 	}
 
-	err = l.Bind(username, password)
+	err = l.StartTLS(configTLS)
 	if err != nil {
 		logrus.Errorf("%s", err)
 		return ""
