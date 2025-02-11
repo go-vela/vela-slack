@@ -1,15 +1,12 @@
 module github.com/go-vela/vela-slack
 
-go 1.23.5
-
-toolchain go1.23.6
+go 1.23.6
 
 require (
 	github.com/Masterminds/semver/v3 v3.3.1
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/go-ldap/ldap/v3 v3.4.10
 	github.com/go-vela/server v0.26.1
-	github.com/go-vela/types v0.26.0
 	github.com/joho/godotenv v1.5.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/slack-go/slack v0.16.0

@@ -64,7 +64,7 @@ func TestSlack_Plugin_Validate_Missing_Text_And_Path(t *testing.T) {
 
 func TestSlack_Plugin_Exec(t *testing.T) {
 	// setup types
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprintln(w, "ok")
 	}))
 	defer ts.Close()
@@ -87,7 +87,7 @@ func TestSlack_Plugin_Exec(t *testing.T) {
 
 func TestSlack_Plugin_Exec_Attachment(t *testing.T) {
 	// setup types
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprintln(w, "ok")
 	}))
 	defer ts.Close()
@@ -110,12 +110,14 @@ func TestSlack_Plugin_Exec_Attachment(t *testing.T) {
 
 func TestSlack_Plugin_Exec_Remote_Attachment(t *testing.T) {
 	// setup types
-	ta := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ta := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 		bytes, err := os.ReadFile("./testdata/slack_attachment_remote.json")
 		if err != nil {
 			t.Errorf("ReadFile error: %v", err)
 		}
+
 		_, err = w.Write(bytes)
 		if err != nil {
 			t.Errorf("Write error: %v", err)
@@ -125,7 +127,7 @@ func TestSlack_Plugin_Exec_Remote_Attachment(t *testing.T) {
 	}))
 	defer ta.Close()
 
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprintln(w, "ok")
 	}))
 	defer ts.Close()
@@ -148,7 +150,7 @@ func TestSlack_Plugin_Exec_Remote_Attachment(t *testing.T) {
 
 func TestSlack_Plugin_Exec_Bad_Attachment(t *testing.T) {
 	// setup types
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprintln(w, "ok")
 	}))
 	defer ts.Close()
@@ -169,12 +171,14 @@ func TestSlack_Plugin_Exec_Bad_Attachment(t *testing.T) {
 
 func TestSlack_Plugin_Exec_Bad_Remote_Attachment_Parse(t *testing.T) {
 	// setup types
-	ta := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ta := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 		bytes, err := os.ReadFile("./testdata/slack_attachment_bad.json")
 		if err != nil {
 			t.Errorf("ReadFile error: %v", err)
 		}
+
 		_, err = w.Write(bytes)
 		if err != nil {
 			t.Errorf("Write error: %v", err)
@@ -184,7 +188,7 @@ func TestSlack_Plugin_Exec_Bad_Remote_Attachment_Parse(t *testing.T) {
 	}))
 	defer ta.Close()
 
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprintln(w, "ok")
 	}))
 	defer ts.Close()
@@ -207,8 +211,9 @@ func TestSlack_Plugin_Exec_Bad_Remote_Attachment_Parse(t *testing.T) {
 
 func TestSlack_Plugin_Exec_Bad_Remote_Attachment(t *testing.T) {
 	// setup types
-	ta := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ta := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 		bytes, err := os.ReadFile("./testdata/slack_attachment_bad.json")
 		if err != nil {
 			t.Errorf("ReadFile error: %v", err)
@@ -223,7 +228,7 @@ func TestSlack_Plugin_Exec_Bad_Remote_Attachment(t *testing.T) {
 	}))
 	defer ta.Close()
 
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprintln(w, "ok")
 	}))
 	defer ts.Close()
@@ -246,8 +251,9 @@ func TestSlack_Plugin_Exec_Bad_Remote_Attachment(t *testing.T) {
 
 func TestSlack_Plugin_Exec_Bad_Remote_Attachment_Unmarshal(t *testing.T) {
 	// setup types
-	ta := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ta := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 		bytes, err := os.ReadFile("./testdata/slack_attachment_remote_bad.json")
 		if err != nil {
 			t.Errorf("ReadFile error: %v", err)
@@ -262,7 +268,7 @@ func TestSlack_Plugin_Exec_Bad_Remote_Attachment_Unmarshal(t *testing.T) {
 	}))
 	defer ta.Close()
 
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprintln(w, "ok")
 	}))
 	defer ts.Close()
@@ -285,7 +291,7 @@ func TestSlack_Plugin_Exec_Bad_Remote_Attachment_Unmarshal(t *testing.T) {
 
 func TestSlack_Plugin_Exec_Bad_File_Ref(t *testing.T) {
 	// setup types
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprintln(w, "ok")
 	}))
 	defer ts.Close()
@@ -306,7 +312,7 @@ func TestSlack_Plugin_Exec_Bad_File_Ref(t *testing.T) {
 
 func TestSlack_Plugin_Exec_Newline(t *testing.T) {
 	// setup types
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprintln(w, "ok")
 	}))
 	defer ts.Close()
@@ -330,7 +336,7 @@ Newlines`,
 
 func TestSlack_Plugin_Exec_Quote(t *testing.T) {
 	// setup types
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprintln(w, "ok")
 	}))
 	defer ts.Close()
@@ -353,7 +359,7 @@ func TestSlack_Plugin_Exec_Quote(t *testing.T) {
 
 func TestSlack_Plugin_Exec_Newline_Embedded(t *testing.T) {
 	// setup types
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprintln(w, "ok")
 	}))
 	defer ts.Close()
@@ -379,7 +385,7 @@ Newlines`,
 
 func TestSlack_Plugin_Exec_Sprig_Text(t *testing.T) {
 	// setup types
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprintln(w, "ok")
 	}))
 	defer ts.Close()
@@ -402,7 +408,7 @@ func TestSlack_Plugin_Exec_Sprig_Text(t *testing.T) {
 
 func TestSlack_Plugin_Exec_Remove_Escape_Chara(t *testing.T) {
 	// setup types
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprintln(w, "ok")
 	}))
 	defer ts.Close()
@@ -425,7 +431,7 @@ func TestSlack_Plugin_Exec_Remove_Escape_Chara(t *testing.T) {
 
 func TestSlack_Plugin_Exec_Do_Not_Remove_Escape_Chara(t *testing.T) {
 	// setup types
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprintln(w, "ok")
 	}))
 	defer ts.Close()

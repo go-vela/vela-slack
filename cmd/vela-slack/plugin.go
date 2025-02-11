@@ -14,11 +14,11 @@ import (
 	"strings"
 	"text/template"
 
-	registry "github.com/go-vela/server/compiler/registry/github"
-
 	"github.com/Masterminds/sprig/v3"
 	"github.com/sirupsen/logrus"
 	"github.com/slack-go/slack"
+
+	registry "github.com/go-vela/server/compiler/registry/github"
 )
 
 type (
