@@ -7,6 +7,7 @@ import (
 	"crypto/x509"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"os"
 	"time"
 
@@ -479,7 +480,17 @@ func getSAMAccountName(c *cli.Context) string {
 		RootCAs:    roots,
 	}
 
-	l, err := ldap.DialURL(fmt.Sprintf("%s:%s", ldapServer, ldapPort))
+	// forcing LDAPS scheme
+	// TODO: allow to define scheme as a plugin option
+	serverFQDN := fmt.Sprintf("ldaps://%s:%s", ldapServer, ldapPort)
+
+	_, err = url.Parse(serverFQDN)
+	if err != nil {
+		logrus.Errorf("unable to parse LDAP server URL")
+		return ""
+	}
+
+	l, err := ldap.DialURL(serverFQDN, ldap.DialWithTLSConfig(configTLS))
 	if err != nil {
 		logrus.Errorf("%s", err)
 		return ""
@@ -487,12 +498,6 @@ func getSAMAccountName(c *cli.Context) string {
 	defer l.Close()
 
 	err = l.Bind(username, password)
-	if err != nil {
-		logrus.Errorf("%s", err)
-		return ""
-	}
-
-	err = l.StartTLS(configTLS)
 	if err != nil {
 		logrus.Errorf("%s", err)
 		return ""
