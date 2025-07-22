@@ -41,18 +41,18 @@ type (
 		BuildBranch               string
 		BuildChannel              string
 		BuildCommit               string
-		BuildCreated              int
-		BuildEnqueued             int
+		BuildCreated              int64
+		BuildEnqueued             int64
 		BuildEvent                string
-		BuildFinished             int
+		BuildFinished             int64
 		BuildHost                 string
 		BuildLink                 string
 		BuildMessage              string
-		BuildNumber               int
-		BuildParent               int
+		BuildNumber               int64
+		BuildParent               int64
 		BuildRef                  string
 		BuildSender               string
-		BuildStarted              int
+		BuildStarted              int64
 		BuildSource               string
 		BuildTag                  string
 		BuildTitle                string
@@ -72,8 +72,8 @@ type (
 		RepoOrg                   string
 		RepositoryPrivate         string
 		RepoPrivate               string
-		RepositoryTimeout         int
-		RepoTimeout               int
+		RepositoryTimeout         int64
+		RepoTimeout               int64
 		RepositoryTrusted         string
 		RepoTrusted               string
 		Token                     string
@@ -218,13 +218,13 @@ func (p *Plugin) Validate() error {
 // such as {{ .BuildCreated }} with a correct values before returning it back into bytes again.
 func replaceString(bytes []byte, p *Plugin) []byte {
 	bStr := string(bytes)
-	bStr = strings.ReplaceAll(bStr, "{{ .BuildCreated }}", strconv.Itoa(p.Env.BuildCreated))
-	bStr = strings.ReplaceAll(bStr, "{{ .BuildEnqueued }}", strconv.Itoa(p.Env.BuildEnqueued))
-	bStr = strings.ReplaceAll(bStr, "{{ .BuildFinished }}", strconv.Itoa(p.Env.BuildFinished))
-	bStr = strings.ReplaceAll(bStr, "{{ .BuildNumber }}", strconv.Itoa(p.Env.BuildNumber))
-	bStr = strings.ReplaceAll(bStr, "{{ .BuildParent }}", strconv.Itoa(p.Env.BuildParent))
-	bStr = strings.ReplaceAll(bStr, "{{ .BuildStarted }}", strconv.Itoa(p.Env.BuildStarted))
-	bStr = strings.ReplaceAll(bStr, "{{ .RepositoryTimeout }}", strconv.Itoa(p.Env.RepositoryTimeout))
+	bStr = strings.ReplaceAll(bStr, "{{ .BuildCreated }}", strconv.FormatInt(p.Env.BuildCreated, 10))
+	bStr = strings.ReplaceAll(bStr, "{{ .BuildEnqueued }}", strconv.FormatInt(p.Env.BuildEnqueued, 10))
+	bStr = strings.ReplaceAll(bStr, "{{ .BuildFinished }}", strconv.FormatInt(p.Env.BuildFinished, 10))
+	bStr = strings.ReplaceAll(bStr, "{{ .BuildNumber }}", strconv.FormatInt(p.Env.BuildNumber, 10))
+	bStr = strings.ReplaceAll(bStr, "{{ .BuildParent }}", strconv.FormatInt(p.Env.BuildParent, 10))
+	bStr = strings.ReplaceAll(bStr, "{{ .BuildStarted }}", strconv.FormatInt(p.Env.BuildStarted, 10))
+	bStr = strings.ReplaceAll(bStr, "{{ .RepositoryTimeout }}", strconv.FormatInt(p.Env.RepositoryTimeout, 10))
 	bytes = []byte(bStr)
 
 	return bytes

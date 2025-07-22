@@ -3,17 +3,17 @@
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/json"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/go-ldap/ldap/v3"
 	"github.com/sirupsen/logrus"
 	"github.com/slack-go/slack"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 
 	_ "github.com/joho/godotenv/autoload"
 
@@ -35,322 +35,294 @@ func main() {
 	fmt.Fprintf(os.Stdout, "%s\n", string(bytes))
 
 	// create new CLI application
-	app := cli.NewApp()
+	cmd := &cli.Command{
+		Name:      "vela-slack",
+		Usage:     "Vela Slack plugin for sending data to a Slack channel",
+		Copyright: "Copyright 2021 Target Brands, Inc. All rights reserved.",
+		Authors: []any{
+			"Vela Admins <vela@target.com>",
+		},
+		// Plugin Metadata
+		Version: v.Semantic(),
+		Action:  run,
 
-	// Plugin Information
+		// Plugin Flags
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:    "log.level",
+				Usage:   "set log level - options: (trace|debug|info|warn|error|fatal|panic)",
+				Value:   "info",
+				Sources: cli.EnvVars("PARAMETER_LOG_LEVEL", "SLACK_LOG_LEVEL"),
+			},
+			&cli.StringFlag{
+				Name:    "sslcert.path",
+				Usage:   "path to ssl cert file",
+				Sources: cli.EnvVars("PARAMETER_SSL_CERT_FILE", "SSL_CERT_FILE"),
+			},
 
-	app.Name = "vela-slack"
-	app.HelpName = "vela-slack"
-	app.Usage = "Vela Slack plugin for sending data to a Slack channel"
-	app.Copyright = "Copyright 2021 Target Brands, Inc. All rights reserved."
-	app.Authors = []*cli.Author{
-		{
-			Name:  "Vela Admins",
-			Email: "vela@target.com",
+			// Config Flags
+
+			&cli.StringFlag{
+				Name:    "filepath",
+				Usage:   "file path field for setting a path to a message file",
+				Sources: cli.EnvVars("PARAMETER_FILEPATH", "SLACK_FILEPATH"),
+			},
+			&cli.StringFlag{
+				Name:    "webhook",
+				Usage:   "slack webhook used to post log messages to channel",
+				Sources: cli.EnvVars("PARAMETER_WEBHOOK", "SLACK_WEBHOOK"),
+			},
+			&cli.BoolFlag{
+				Name:    "remote",
+				Usage:   "if filepath is remote or not",
+				Sources: cli.EnvVars("PARAMETER_REMOTE", "SLACK_REMOTE"),
+			},
+
+			// Webhook Flags
+
+			&cli.StringFlag{
+				Name:    "slack-username",
+				Usage:   "webhook message field for setting the username",
+				Sources: cli.EnvVars("PARAMETER_USERNAME", "SLACK_USERNAME"),
+			},
+			&cli.StringFlag{
+				Name:    "icon-emoji",
+				Usage:   "webhook message field for setting the icon emoji",
+				Sources: cli.EnvVars("PARAMETER_ICON_EMOJI", "SLACK_ICON_EMOJI"),
+			},
+			&cli.StringFlag{
+				Name:    "icon-url",
+				Usage:   "webhook message field for setting the icon url",
+				Sources: cli.EnvVars("PARAMETER_ICON_URL", "SLACK_ICON_URL"),
+			},
+			&cli.StringFlag{
+				Name:    "channel",
+				Usage:   "webhook message field for setting channel",
+				Sources: cli.EnvVars("PARAMETER_CHANNEL", "SLACK_CHANNEL"),
+			},
+			&cli.StringFlag{
+				Name:    "thread-ts",
+				Usage:   "webhook message field for setting the thread timestamp",
+				Sources: cli.EnvVars("PARAMETER_THREAD_TS", "SLACK_THREAD_TS"),
+			},
+			&cli.StringFlag{
+				Name:    "text",
+				Usage:   "webhook message field for setting text",
+				Sources: cli.EnvVars("PARAMETER_TEXT", "SLACK_TEXT"),
+			},
+			&cli.StringFlag{
+				Name:    "parse",
+				Usage:   "webhook message field for setting parse options",
+				Sources: cli.EnvVars("PARAMETER_PARSE", "SLACK_PARSE"),
+			},
+
+			// Build Environment Variable Flags
+
+			&cli.StringFlag{
+				Name:    "build-author",
+				Usage:   "environment variable reference for reading in build author",
+				Sources: cli.EnvVars("VELA_BUILD_AUTHOR", "BUILD_AUTHOR"),
+			},
+			&cli.StringFlag{
+				Name:    "build-author-email",
+				Usage:   "environment variable reference for reading in build author-email",
+				Sources: cli.EnvVars("VELA_BUILD_AUTHOR_EMAIL", "BUILD_AUTHOR_EMAIL"),
+			},
+			&cli.StringFlag{
+				Name:    "build-branch",
+				Usage:   "environment variable reference for reading in build branch",
+				Sources: cli.EnvVars("VELA_BUILD_BRANCH", "BUILD_BRANCH"),
+			},
+			&cli.StringFlag{
+				Name:    "build-channel",
+				Usage:   "environment variable reference for reading in build channel",
+				Sources: cli.EnvVars("VELA_BUILD_CHANNEL", "BUILD_CHANNEL"),
+			},
+			&cli.StringFlag{
+				Name:    "build-commit",
+				Usage:   "environment variable reference for reading in build commit",
+				Sources: cli.EnvVars("VELA_BUILD_COMMIT", "BUILD_COMMIT"),
+			},
+			&cli.IntFlag{
+				Name:    "build-created",
+				Usage:   "environment variable reference for reading in build created",
+				Sources: cli.EnvVars("VELA_BUILD_CREATED", "BUILD_CREATED"),
+			},
+			&cli.IntFlag{
+				Name:    "build-enqueued",
+				Usage:   "environment variable reference for reading in build enqueued",
+				Sources: cli.EnvVars("VELA_BUILD_ENQUEUED", "BUILD_ENQUEUED"),
+			},
+			&cli.StringFlag{
+				Name:    "build-event",
+				Usage:   "environment variable reference for reading in build event",
+				Sources: cli.EnvVars("VELA_BUILD_EVENT", "BUILD_EVENT"),
+			},
+			&cli.IntFlag{
+				Name:    "build-finished",
+				Usage:   "environment variable reference for reading in build finished",
+				Sources: cli.EnvVars("VELA_BUILD_FINISHED", "BUILD_FINISHED"),
+			},
+			&cli.StringFlag{
+				Name:    "build-host",
+				Usage:   "environment variable reference for reading in build host",
+				Sources: cli.EnvVars("VELA_BUILD_HOST", "BUILD_HOST"),
+			},
+			&cli.StringFlag{
+				Name:    "build-link",
+				Usage:   "environment variable reference for reading in build link",
+				Sources: cli.EnvVars("VELA_BUILD_LINK", "BUILD_LINK"),
+			},
+			&cli.StringFlag{
+				Name:    "build-message",
+				Usage:   "environment variable reference for reading in build message",
+				Sources: cli.EnvVars("VELA_BUILD_MESSAGE", "BUILD_MESSAGE"),
+			},
+			&cli.IntFlag{
+				Name:    "build-number",
+				Usage:   "environment variable reference for reading in build number",
+				Sources: cli.EnvVars("VELA_BUILD_NUMBER", "BUILD_NUMBER"),
+			},
+			&cli.IntFlag{
+				Name:    "build-parent",
+				Usage:   "environment variable reference for reading in build parent",
+				Sources: cli.EnvVars("VELA_BUILD_PARENT", "BUILD_PARENT"),
+			},
+			&cli.StringFlag{
+				Name:    "build-ref",
+				Usage:   "environment variable reference for reading in build ref",
+				Sources: cli.EnvVars("VELA_BUILD_REF", "BUILD_REF"),
+			},
+			&cli.StringFlag{
+				Name:    "build-sender",
+				Usage:   "environment variable reference for reading in build sender",
+				Sources: cli.EnvVars("VELA_BUILD_SENDER", "BUILD_SENDER"),
+			},
+			&cli.IntFlag{
+				Name:    "build-started",
+				Usage:   "environment variable reference for reading in build started",
+				Sources: cli.EnvVars("VELA_BUILD_STARTED", "BUILD_STARTED"),
+			},
+			&cli.StringFlag{
+				Name:    "build-source",
+				Usage:   "environment variable reference for reading in build source",
+				Sources: cli.EnvVars("VELA_BUILD_SOURCE", "BUILD_SOURCE"),
+			},
+			&cli.StringFlag{
+				Name:    "build-tag",
+				Usage:   "environment variable reference for reading in build tag",
+				Sources: cli.EnvVars("VELA_BUILD_TAG", "BUILD_TAG"),
+			},
+			&cli.StringFlag{
+				Name:    "build-title",
+				Usage:   "environment variable reference for reading in build title",
+				Sources: cli.EnvVars("VELA_BUILD_TITLE", "BUILD_TITLE"),
+			},
+			&cli.StringFlag{
+				Name:    "build-workspace",
+				Usage:   "environment variable reference for reading in build workspace",
+				Sources: cli.EnvVars("VELA_BUILD_WORKSPACE", "BUILD_WORKSPACE"),
+			},
+
+			// Repository Environment Variable Flags
+
+			&cli.StringFlag{
+				Name:    "repo-branch",
+				Usage:   "environment variable reference for reading in repository branch",
+				Sources: cli.EnvVars("VELA_REPO_BRANCH", "REPOSITORY_BRANCH"),
+			},
+			&cli.StringFlag{
+				Name:    "repo-clone",
+				Usage:   "environment variable reference for reading in repository clone",
+				Sources: cli.EnvVars("VELA_REPO_CLONE", "REPOSITORY_CLONE"),
+			},
+			&cli.StringFlag{
+				Name:    "repo-full-name",
+				Usage:   "environment variable reference for reading in repository full name",
+				Sources: cli.EnvVars("VELA_REPO_FULL_NAME", "REPOSITORY_FULL_NAME"),
+			},
+			&cli.StringFlag{
+				Name:    "repo-link",
+				Usage:   "environment variable reference for reading in repository link",
+				Sources: cli.EnvVars("VELA_REPO_LINK", "REPOSITORY_LINK"),
+			},
+			&cli.StringFlag{
+				Name:    "repo-name",
+				Usage:   "environment variable reference for reading in repository name",
+				Sources: cli.EnvVars("VELA_REPO_NAME", "REPOSITORY_NAME"),
+			},
+			&cli.StringFlag{
+				Name:    "repo-org",
+				Usage:   "environment variable reference for reading in repository org",
+				Sources: cli.EnvVars("VELA_REPO_ORG", "REPOSITORY_ORG"),
+			},
+			&cli.StringFlag{
+				Name:    "repo-private",
+				Usage:   "environment variable reference for reading in repository private",
+				Sources: cli.EnvVars("VELA_REPO_PRIVATE", "REPOSITORY_PRIVATE"),
+			},
+			&cli.IntFlag{
+				Name:    "repo-timeout",
+				Usage:   "environment variable reference for reading in repository timeout",
+				Sources: cli.EnvVars("VELA_REPO_TIMEOUT", "REPOSITORY_TIMEOUT"),
+			},
+			&cli.StringFlag{
+				Name:    "repo-trusted",
+				Usage:   "environment variable reference for reading in repository trusted",
+				Sources: cli.EnvVars("VELA_REPO_TRUSTED", "REPOSITORY_TRUSTED"),
+			},
+
+			// Registry
+
+			&cli.StringFlag{
+				Name:    "registry-url",
+				Usage:   "registry url",
+				Sources: cli.EnvVars("PARAMETER_REGISTRY", "REGISTRY_URL"),
+			},
+
+			// Optional LDAP config flags
+
+			&cli.StringFlag{
+				Name:    "ldap-username",
+				Usage:   "environment variable for LDAP username",
+				Sources: cli.EnvVars("PARAMETER_LDAP_USERNAME", "LDAP_USERNAME"),
+			},
+			&cli.StringFlag{
+				Name:    "ldap-password",
+				Usage:   "environment variable for LDAP password",
+				Sources: cli.EnvVars("PARAMETER_LDAP_PASSWORD", "LDAP_PASSWORD"),
+			},
+			&cli.StringFlag{
+				Name:    "ldap-server",
+				Usage:   "environment variable for enterprise LDAP server",
+				Sources: cli.EnvVars("PARAMETER_LDAP_SERVER", "LDAP_SERVER"),
+			},
+			&cli.StringFlag{
+				Name:    "ldap-port",
+				Usage:   "environment variable for enterprise LDAP port",
+				Sources: cli.EnvVars("PARAMETER_LDAP_PORT", "LDAP_PORT"),
+			},
+			&cli.StringFlag{
+				Name:    "ldap-search-base",
+				Usage:   "environment variable for enterprise LDAP search base",
+				Sources: cli.EnvVars("PARAMETER_LDAP_SEARCH_BASE", "LDAP_SEARCH_BASE"),
+			},
+			&cli.StringFlag{
+				Name:    "token",
+				Usage:   "github token from user",
+				Sources: cli.EnvVars("PARAMETER_TOKEN", "GITHUB_TOKEN"),
+			},
 		},
 	}
 
-	// Plugin Metadata
-
-	app.Action = run
-	app.Compiled = time.Now()
-	app.Version = v.Semantic()
-
-	// Plugin Flags
-
-	app.Flags = []cli.Flag{
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_LOG_LEVEL", "SLACK_LOG_LEVEL"},
-			FilePath: "/vela/parameters/slack/log_level,/vela/secrets/slack/log_level",
-			Name:     "log.level",
-			Usage:    "set log level - options: (trace|debug|info|warn|error|fatal|panic)",
-			Value:    "info",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_SSL_CERT_FILE", "SSL_CERT_FILE"},
-			FilePath: "/vela/parameters/sslcert/filepath,/vela/secrets/sslcert/filepath",
-			Name:     "sslcert.path",
-			Usage:    "path to ssl cert file",
-		},
-
-		// Config Flags
-
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_FILEPATH", "SLACK_FILEPATH"},
-			FilePath: "/vela/parameters/slack/filepath,/vela/secrets/slack/filepath",
-			Name:     "filepath",
-			Usage:    "file path field for setting a path to a message file",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_WEBHOOK", "SLACK_WEBHOOK"},
-			FilePath: "/vela/parameters/slack/webhook,/vela/secrets/slack/webhook",
-			Name:     "webhook",
-			Usage:    "slack webhook used to post log messages to channel",
-		},
-		&cli.BoolFlag{
-			EnvVars:  []string{"PARAMETER_REMOTE", "SLACK_REMOTE"},
-			FilePath: "/vela/parameters/slack/remote,/vela/secrets/slack/remote",
-			Name:     "remote",
-			Usage:    "if filepath is remote or not",
-		},
-
-		// Webhook Flags
-
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_USERNAME", "SLACK_USERNAME"},
-			FilePath: "/vela/parameters/slack/username,/vela/secrets/slack/username",
-			Name:     "slack-username",
-			Usage:    "webhook message field for setting the username",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_ICON_EMOJI", "SLACK_ICON_EMOJI"},
-			FilePath: "/vela/parameters/slack/icon_emoji,/vela/secrets/slack/icon_emoji",
-			Name:     "icon-emoji",
-			Usage:    "webhook message field for setting the icon emoji",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_ICON_URL", "SLACK_ICON_URL"},
-			FilePath: "/vela/parameters/slack/icon_url,/vela/secrets/slack/icon_url",
-			Name:     "icon-url",
-			Usage:    "webhook message field for setting the icon url",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_CHANNEL", "SLACK_CHANNEL"},
-			FilePath: "/vela/parameters/slack/channel,/vela/secrets/slack/channel",
-			Name:     "channel",
-			Usage:    "webhook message field for setting channel",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_THREAD_TS", "SLACK_THREAD_TS"},
-			FilePath: "/vela/parameters/slack/thread_ts,/vela/secrets/slack/thread_ts",
-			Name:     "thread-ts",
-			Usage:    "webhook message field for setting the thread timestamp",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_TEXT", "SLACK_TEXT"},
-			FilePath: "/vela/parameters/slack/text,/vela/secrets/slack/text",
-			Name:     "text",
-			Usage:    "webhook message field for setting text",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_PARSE", "SLACK_PARSE"},
-			FilePath: "/vela/parameters/slack/parse,/vela/secrets/slack/parse",
-			Name:     "parse",
-			Usage:    "webhook message field for setting parse options",
-		},
-
-		// Build Environment Variable Flags
-
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_BUILD_AUTHOR", "BUILD_AUTHOR"},
-			Name:    "build-author",
-			Usage:   "environment variable reference for reading in build author",
-		},
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_BUILD_AUTHOR_EMAIL", "BUILD_AUTHOR_EMAIL"},
-			Name:    "build-author-email",
-			Usage:   "environment variable reference for reading in build author-email",
-		},
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_BUILD_BRANCH", "BUILD_BRANCH"},
-			Name:    "build-branch",
-			Usage:   "environment variable reference for reading in build branch",
-		},
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_BUILD_CHANNEL", "BUILD_CHANNEL"},
-			Name:    "build-channel",
-			Usage:   "environment variable reference for reading in build channel",
-		},
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_BUILD_COMMIT", "BUILD_COMMIT"},
-			Name:    "build-commit",
-			Usage:   "environment variable reference for reading in build commit",
-		},
-		&cli.IntFlag{
-			EnvVars: []string{"VELA_BUILD_CREATED", "BUILD_CREATED"},
-			Name:    "build-created",
-			Usage:   "environment variable reference for reading in build created",
-		},
-		&cli.IntFlag{
-			EnvVars: []string{"VELA_BUILD_ENQUEUED", "BUILD_ENQUEUED"},
-			Name:    "build-enqueued",
-			Usage:   "environment variable reference for reading in build enqueued",
-		},
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_BUILD_EVENT", "BUILD_EVENT"},
-			Name:    "build-event",
-			Usage:   "environment variable reference for reading in build event",
-		},
-		&cli.IntFlag{
-			EnvVars: []string{"VELA_BUILD_FINISHED", "BUILD_FINISHED"},
-			Name:    "build-finished",
-			Usage:   "environment variable reference for reading in build finished",
-		},
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_BUILD_HOST", "BUILD_HOST"},
-			Name:    "build-host",
-			Usage:   "environment variable reference for reading in build host",
-		},
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_BUILD_LINK", "BUILD_LINK"},
-			Name:    "build-link",
-			Usage:   "environment variable reference for reading in build link",
-		},
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_BUILD_MESSAGE", "BUILD_MESSAGE"},
-			Name:    "build-message",
-			Usage:   "environment variable reference for reading in build message",
-		},
-		&cli.IntFlag{
-			EnvVars: []string{"VELA_BUILD_NUMBER", "BUILD_NUMBER"},
-			Name:    "build-number",
-			Usage:   "environment variable reference for reading in build number",
-		},
-		&cli.IntFlag{
-			EnvVars: []string{"VELA_BUILD_PARENT", "BUILD_PARENT"},
-			Name:    "build-parent",
-			Usage:   "environment variable reference for reading in build parent",
-		},
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_BUILD_REF", "BUILD_REF"},
-			Name:    "build-ref",
-			Usage:   "environment variable reference for reading in build ref",
-		},
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_BUILD_SENDER", "BUILD_SENDER"},
-			Name:    "build-sender",
-			Usage:   "environment variable reference for reading in build sender",
-		},
-		&cli.IntFlag{
-			EnvVars: []string{"VELA_BUILD_STARTED", "BUILD_STARTED"},
-			Name:    "build-started",
-			Usage:   "environment variable reference for reading in build started",
-		},
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_BUILD_SOURCE", "BUILD_SOURCE"},
-			Name:    "build-source",
-			Usage:   "environment variable reference for reading in build source",
-		},
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_BUILD_TAG", "BUILD_TAG"},
-			Name:    "build-tag",
-			Usage:   "environment variable reference for reading in build tag",
-		},
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_BUILD_TITLE", "BUILD_TITLE"},
-			Name:    "build-title",
-			Usage:   "environment variable reference for reading in build title",
-		},
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_BUILD_WORKSPACE", "BUILD_WORKSPACE"},
-			Name:    "build-workspace",
-			Usage:   "environment variable reference for reading in build workspace",
-		},
-
-		// Repository Environment Variable Flags
-
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_REPO_BRANCH", "REPOSITORY_BRANCH"},
-			Name:    "repo-branch",
-			Usage:   "environment variable reference for reading in repository branch",
-		},
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_REPO_CLONE", "REPOSITORY_CLONE"},
-			Name:    "repo-clone",
-			Usage:   "environment variable reference for reading in repository clone",
-		},
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_REPO_FULL_NAME", "REPOSITORY_FULL_NAME"},
-			Name:    "repo-full-name",
-			Usage:   "environment variable reference for reading in repository full name",
-		},
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_REPO_LINK", "REPOSITORY_LINK"},
-			Name:    "repo-link",
-			Usage:   "environment variable reference for reading in repository link",
-		},
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_REPO_NAME", "REPOSITORY_NAME"},
-			Name:    "repo-name",
-			Usage:   "environment variable reference for reading in repository name",
-		},
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_REPO_ORG", "REPOSITORY_ORG"},
-			Name:    "repo-org",
-			Usage:   "environment variable reference for reading in repository org",
-		},
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_REPO_PRIVATE", "REPOSITORY_PRIVATE"},
-			Name:    "repo-private",
-			Usage:   "environment variable reference for reading in repository private",
-		},
-		&cli.IntFlag{
-			EnvVars: []string{"VELA_REPO_TIMEOUT", "REPOSITORY_TIMEOUT"},
-			Name:    "repo-timeout",
-			Usage:   "environment variable reference for reading in repository timeout",
-		},
-		&cli.StringFlag{
-			EnvVars: []string{"VELA_REPO_TRUSTED", "REPOSITORY_TRUSTED"},
-			Name:    "repo-trusted",
-			Usage:   "environment variable reference for reading in repository trusted",
-		},
-
-		// Registry
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_REGISTRY", "REGISTRY_URL"},
-			FilePath: "/vela/parameters/slack/registry-url,/vela/secrets/slack/registry-url",
-			Name:     "registry-url",
-			Usage:    "registry url",
-		},
-
-		// Optional LDAP config flags
-
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_LDAP_USERNAME", "LDAP_USERNAME"},
-			FilePath: string("/vela/parameters/ldap/username,/vela/secrets/ldap/username"),
-			Name:     "ldap-username",
-			Usage:    "environment variable for LDAP username",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_LDAP_PASSWORD", "LDAP_PASSWORD"},
-			FilePath: string("/vela/parameters/ldap/password,/vela/secrets/ldap/password"),
-			Name:     "ldap-password",
-			Usage:    "environment variable for LDAP password",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_LDAP_SERVER", "LDAP_SERVER"},
-			FilePath: string("/vela/parameters/ldap/server,/vela/secrets/ldap/server"),
-			Name:     "ldap-server",
-			Usage:    "environment variable for enterprise LDAP server",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_LDAP_PORT", "LDAP_PORT"},
-			FilePath: string("/vela/parameters/ldap/port,/vela/secrets/ldap/port"),
-			Name:     "ldap-port",
-			Usage:    "environment variable for enterprise LDAP port",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_LDAP_SEARCH_BASE", "LDAP_SEARCH_BASE"},
-			FilePath: string("/vela/parameters/ldap/searchbase,/vela/secrets/ldap/searchbase"),
-			Name:     "ldap-search-base",
-			Usage:    "environment variable for enterprise LDAP search base",
-		},
-		&cli.StringFlag{
-			EnvVars:  []string{"PARAMETER_TOKEN", "GITHUB_TOKEN"},
-			FilePath: "/vela/parameters/slack/token,/vela/secrets/slack/token",
-			Name:     "token",
-			Usage:    "github token from user",
-		},
-	}
-
-	err = app.Run(os.Args)
+	err = cmd.Run(context.Background(), os.Args)
 	if err != nil {
 		logrus.Fatal(err)
 	}
 }
 
 // run executes the plugin based off the configuration provided.
-func run(c *cli.Context) error {
+func run(ctx context.Context, c *cli.Command) error {
 	// set the log level for the plugin
 	switch c.String("log.level") {
 	case "t", "trace", "Trace", "TRACE":
@@ -398,18 +370,18 @@ func run(c *cli.Context) error {
 			BuildBranch:               c.String("build-branch"),
 			BuildChannel:              c.String("build-channel"),
 			BuildCommit:               c.String("build-commit"),
-			BuildCreated:              c.Int("build-created"),
-			BuildEnqueued:             c.Int("build-enqueued"),
+			BuildCreated:              int64(c.Int("build-created")),
+			BuildEnqueued:             int64(c.Int("build-enqueued")),
 			BuildEvent:                c.String("build-event"),
-			BuildFinished:             c.Int("build-finished"),
+			BuildFinished:             int64(c.Int("build-finished")),
 			BuildHost:                 c.String("build-host"),
 			BuildLink:                 c.String("build-link"),
 			BuildMessage:              c.String("build-message"),
-			BuildNumber:               c.Int("build-number"),
-			BuildParent:               c.Int("build-parent"),
+			BuildNumber:               int64(c.Int("build-number")),
+			BuildParent:               int64(c.Int("build-parent")),
 			BuildRef:                  c.String("build-ref"),
 			BuildSender:               c.String("build-sender"),
-			BuildStarted:              c.Int("build-started"),
+			BuildStarted:              int64(c.Int("build-started")),
 			BuildSource:               c.String("build-source"),
 			BuildTag:                  c.String("build-tag"),
 			BuildTitle:                c.String("build-title"),
@@ -429,8 +401,8 @@ func run(c *cli.Context) error {
 			RepoOrg:                   c.String("repo-org"),
 			RepositoryPrivate:         c.String("repo-private"),
 			RepoPrivate:               c.String("repo-private"),
-			RepositoryTimeout:         c.Int("repo-timeout"),
-			RepoTimeout:               c.Int("repo-timeout"),
+			RepositoryTimeout:         int64(c.Int("repo-timeout")),
+			RepoTimeout:               int64(c.Int("repo-timeout")),
 			RepositoryTrusted:         c.String("repo-trusted"),
 			RepoTrusted:               c.String("repo-trusted"),
 			Token:                     c.String("token"),
@@ -448,7 +420,7 @@ func run(c *cli.Context) error {
 }
 
 // Retrieves sAMAccountName from LDAP server using build author's email.
-func getSAMAccountName(c *cli.Context) string {
+func getSAMAccountName(c *cli.Command) string {
 	// LDAP environment variables
 	email := c.String("build-author-email")
 	username := c.String("ldap-username")
