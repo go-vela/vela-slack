@@ -81,7 +81,7 @@ type (
 )
 
 // Exec formats and runs the commands for sending a message via Slack.
-func (p *Plugin) Exec() error {
+func (p *Plugin) Exec(ctx context.Context) error {
 	var (
 		attachments []slack.Attachment
 		err         error
@@ -110,7 +110,7 @@ func (p *Plugin) Exec() error {
 		logrus.Infof("Parsing provided template file, %s", p.Path)
 
 		if p.Remote {
-			attachments, err = getRemoteAttachment(p)
+			attachments, err = getRemoteAttachment(ctx, p)
 		} else {
 			attachments, err = getAttachmentFromFile(p)
 		}
@@ -263,13 +263,11 @@ func getAttachmentFromFile(p *Plugin) ([]slack.Attachment, error) {
 
 // getRemoteAttachment function to open and parse slack attachment json file into
 // slack webhook message payload.
-func getRemoteAttachment(p *Plugin) ([]slack.Attachment, error) {
+func getRemoteAttachment(ctx context.Context, p *Plugin) ([]slack.Attachment, error) {
 	var (
 		bytes []byte
 		err   error
 	)
-
-	ctx := context.Background()
 
 	reg, err := registry.New(ctx, p.Env.RegistryURL, p.Env.Token)
 	if err != nil {
