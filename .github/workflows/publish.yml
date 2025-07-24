@@ -4,7 +4,7 @@ name: publish
 # trigger on push events with branch main
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 # pipeline to execute
 jobs:
@@ -12,31 +12,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: clone
-      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-      with:
-        # ensures we fetch tag history for the repository
-        fetch-depth: 0
+      - name: clone
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          # ensures we fetch tag history for the repository
+          fetch-depth: 0
 
-    - name: install go
-      uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5
-      with:
-        # use version from go.mod file
-        go-version-file: 'go.mod'
-        cache: true
-        check-latest: true
+      - name: install go
+        uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5
+        with:
+          # use version from go.mod file
+          go-version-file: 'go.mod'
+          cache: true
+          check-latest: true
 
-    - name: build
-      env:
-        GOOS: linux
-        CGO_ENABLED: '0'
-      run: |
-        make build-static-ci
+      - name: build
+        env:
+          GOOS: linux
+          CGO_ENABLED: '0'
+        run: |
+          make build-static-ci
 
-    - name: publish
-      uses: elgohr/Publish-Docker-Github-Action@master
-      with:
-        name: target/vela-slack
-        cache: true
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: publish
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: target/vela-slack
+          cache: true
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}

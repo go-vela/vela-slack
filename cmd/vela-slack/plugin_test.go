@@ -3,6 +3,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -79,7 +80,7 @@ func TestSlack_Plugin_Exec(t *testing.T) {
 		Remote: false,
 	}
 
-	err := p.Exec()
+	err := p.Exec(context.Background())
 	if err != nil {
 		t.Errorf("Exec returned err: %v", err)
 	}
@@ -102,7 +103,7 @@ func TestSlack_Plugin_Exec_Attachment(t *testing.T) {
 		Remote: false,
 	}
 
-	err := p.Exec()
+	err := p.Exec(context.Background())
 	if err != nil {
 		t.Errorf("Exec returned err: %v", err)
 	}
@@ -142,7 +143,7 @@ func TestSlack_Plugin_Exec_Remote_Attachment(t *testing.T) {
 		Remote:     true,
 	}
 
-	err := p.Exec()
+	err := p.Exec(context.Background())
 	if err != nil {
 		t.Errorf("Exec returned err: %v", err)
 	}
@@ -163,7 +164,7 @@ func TestSlack_Plugin_Exec_Bad_Attachment(t *testing.T) {
 		Remote:     false,
 	}
 
-	err := p.Exec()
+	err := p.Exec(context.Background())
 	if err == nil {
 		t.Error("Exec should return err due to invalid JSON file")
 	}
@@ -203,7 +204,7 @@ func TestSlack_Plugin_Exec_Bad_Remote_Attachment_Parse(t *testing.T) {
 		Remote:     true,
 	}
 
-	err := p.Exec()
+	err := p.Exec(context.Background())
 	if err == nil {
 		t.Error("Exec should return err due to invalid slack attachment")
 	}
@@ -243,7 +244,7 @@ func TestSlack_Plugin_Exec_Bad_Remote_Attachment(t *testing.T) {
 		Remote:     true,
 	}
 
-	err := p.Exec()
+	err := p.Exec(context.Background())
 	if err == nil {
 		t.Error("Exec should return err due to invalid JSON file")
 	}
@@ -283,7 +284,7 @@ func TestSlack_Plugin_Exec_Bad_Remote_Attachment_Unmarshal(t *testing.T) {
 		Remote:     true,
 	}
 
-	err := p.Exec()
+	err := p.Exec(context.Background())
 	if err == nil {
 		t.Error("Exec should return err due to invalid JSON file")
 	}
@@ -304,7 +305,7 @@ func TestSlack_Plugin_Exec_Bad_File_Ref(t *testing.T) {
 		Remote:     false,
 	}
 
-	err := p.Exec()
+	err := p.Exec(context.Background())
 	if err == nil {
 		t.Error("Exec should return err due to file not existing")
 	}
@@ -328,7 +329,7 @@ Newlines`,
 		Remote:     false,
 	}
 
-	err := p.Exec()
+	err := p.Exec(context.Background())
 	if err != nil {
 		t.Errorf("Exec returned err: %v", err)
 	}
@@ -351,7 +352,7 @@ func TestSlack_Plugin_Exec_Quote(t *testing.T) {
 		Remote:     false,
 	}
 
-	err := p.Exec()
+	err := p.Exec(context.Background())
 	if err != nil {
 		t.Errorf("Exec returned err: %v", err)
 	}
@@ -377,7 +378,7 @@ Newlines`,
 		Remote: false,
 	}
 
-	err := p.Exec()
+	err := p.Exec(context.Background())
 	if err != nil {
 		t.Errorf("Exec returned err: %v", err)
 	}
@@ -400,7 +401,7 @@ func TestSlack_Plugin_Exec_Sprig_Text(t *testing.T) {
 		Remote: false,
 	}
 
-	err := p.Exec()
+	err := p.Exec(context.Background())
 	if err != nil {
 		t.Errorf("Exec returned err: %v", err)
 	}
@@ -423,7 +424,7 @@ func TestSlack_Plugin_Exec_Remove_Escape_Chara(t *testing.T) {
 		Remote: false,
 	}
 
-	err := p.Exec()
+	err := p.Exec(context.Background())
 	if err != nil {
 		t.Errorf("Exec returned err: %v", err)
 	}
@@ -446,7 +447,7 @@ func TestSlack_Plugin_Exec_Do_Not_Remove_Escape_Chara(t *testing.T) {
 		Remote: false,
 	}
 
-	err := p.Exec()
+	err := p.Exec(context.Background())
 	if err != nil {
 		t.Errorf("Exec returned err: %v", err)
 	}
