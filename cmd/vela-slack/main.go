@@ -8,6 +8,7 @@ import (
 	"crypto/x509"
 	"encoding/json"
 	"fmt"
+	"net/mail"
 	"os"
 
 	"github.com/go-ldap/ldap/v3"
@@ -40,7 +41,10 @@ func main() {
 		Usage:     "Vela Slack plugin for sending data to a Slack channel",
 		Copyright: "Copyright 2021 Target Brands, Inc. All rights reserved.",
 		Authors: []any{
-			"Vela Admins <vela@target.com>",
+			&mail.Address{
+				Name:    "Vela Admins",
+				Address: "vela@target.com",
+			},
 		},
 		// Plugin Metadata
 		Version: v.Semantic(),
@@ -51,8 +55,8 @@ func main() {
 	cmd.Flags = []cli.Flag{
 		&cli.StringFlag{
 			Name:    "log.level",
-			Usage:   "set log level - options: (trace|debug|info|warn|error|fatal|panic)",
 			Value:   "info",
+			Usage:   "set log level - options: (trace|debug|info|warn|error|fatal|panic)",
 			Sources: cli.EnvVars("PARAMETER_LOG_LEVEL", "SLACK_LOG_LEVEL"),
 		},
 		&cli.StringFlag{
