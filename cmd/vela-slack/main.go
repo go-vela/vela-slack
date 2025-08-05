@@ -184,172 +184,109 @@ func main() {
 		// Build Environment Variable Flags
 
 		&cli.StringFlag{
-			Name:  "build-author",
-			Usage: "environment variable reference for reading in build author",
-			Sources: cli.NewValueSourceChain(
-				cli.EnvVar("VELA_BUILD_AUTHOR"),
-				cli.EnvVar("BUILD_AUTHOR"),
-			),
+			Name:    "build-author",
+			Usage:   "environment variable reference for reading in build author",
+			Sources: cli.EnvVars("VELA_BUILD_AUTHOR", "BUILD_AUTHOR"),
 		},
 		&cli.StringFlag{
-			Name:  "build-author-email",
-			Usage: "environment variable reference for reading in build author-email",
-			Sources: cli.NewValueSourceChain(
-				cli.EnvVar("VELA_BUILD_AUTHOR_EMAIL"),
-				cli.EnvVar("BUILD_AUTHOR_EMAIL"),
-			),
+			Name:    "build-author-email",
+			Usage:   "environment variable reference for reading in build author-email",
+			Sources: cli.EnvVars("VELA_BUILD_AUTHOR_EMAIL", "BUILD_AUTHOR_EMAIL"),
 		},
 		&cli.StringFlag{
-			Name:  "build-branch",
-			Usage: "environment variable reference for reading in build branch",
-			Sources: cli.NewValueSourceChain(
-				cli.EnvVar("VELA_BUILD_BRANCH"),
-				cli.EnvVar("BUILD_BRANCH"),
-			),
+			Name:    "build-branch",
+			Usage:   "environment variable reference for reading in build branch",
+			Sources: cli.EnvVars("VELA_BUILD_BRANCH", "BUILD_BRANCH"),
 		},
 		&cli.StringFlag{
-			Name:  "build-channel",
-			Usage: "environment variable reference for reading in build channel",
-			Sources: cli.NewValueSourceChain(
-				cli.EnvVar("VELA_BUILD_CHANNEL"),
-				cli.EnvVar("BUILD_CHANNEL"),
-			),
+			Name:    "build-channel",
+			Usage:   "environment variable reference for reading in build channel",
+			Sources: cli.EnvVars("VELA_BUILD_CHANNEL", "BUILD_CHANNEL"),
 		},
 		&cli.StringFlag{
-			Name:  "build-commit",
-			Usage: "environment variable reference for reading in build commit",
-			Sources: cli.NewValueSourceChain(
-				cli.EnvVar("VELA_BUILD_COMMIT"),
-				cli.EnvVar("BUILD_COMMIT"),
-			),
+			Name:    "build-commit",
+			Usage:   "environment variable reference for reading in build commit",
+			Sources: cli.EnvVars("VELA_BUILD_COMMIT", "BUILD_COMMIT"),
 		},
 		&cli.IntFlag{
-			Name:  "build-created",
-			Usage: "environment variable reference for reading in build created",
-			Sources: cli.NewValueSourceChain(
-				cli.EnvVar("VELA_BUILD_CREATED"),
-				cli.EnvVar("BUILD_CREATED"),
-			),
+			Name:    "build-created",
+			Usage:   "environment variable reference for reading in build created",
+			Sources: cli.EnvVars("VELA_BUILD_CREATED", "BUILD_CREATED"),
 		},
 		&cli.IntFlag{
-			Name:  "build-enqueued",
-			Usage: "environment variable reference for reading in build enqueued",
-			Sources: cli.NewValueSourceChain(
-				cli.EnvVar("VELA_BUILD_ENQUEUED"),
-				cli.EnvVar("BUILD_ENQUEUED"),
-			),
+			Name:    "build-enqueued",
+			Usage:   "environment variable reference for reading in build enqueued",
+			Sources: cli.EnvVars("VELA_BUILD_ENQUEUED", "BUILD_ENQUEUED"),
 		},
 		&cli.StringFlag{
-			Name:  "build-event",
-			Usage: "environment variable reference for reading in build event",
-			Sources: cli.NewValueSourceChain(
-				cli.EnvVar("VELA_BUILD_EVENT"),
-				cli.EnvVar("BUILD_EVENT"),
-			),
+			Name:    "build-event",
+			Usage:   "environment variable reference for reading in build event",
+			Sources: cli.EnvVars("VELA_BUILD_EVENT", "BUILD_EVENT"),
 		},
 		&cli.IntFlag{
-			Name:  "build-finished",
-			Usage: "environment variable reference for reading in build finished",
-			Sources: cli.NewValueSourceChain(
-				cli.EnvVar("VELA_BUILD_FINISHED"),
-				cli.EnvVar("BUILD_FINISHED"),
-			),
+			Name:    "build-finished",
+			Usage:   "environment variable reference for reading in build finished",
+			Sources: cli.EnvVars("VELA_BUILD_FINISHED", "BUILD_FINISHED"),
 		},
 		&cli.StringFlag{
-			Name:  "build-host",
-			Usage: "environment variable reference for reading in build host",
-			Sources: cli.NewValueSourceChain(
-				cli.EnvVar("VELA_BUILD_HOST"),
-				cli.EnvVar("BUILD_HOST"),
-			),
+			Name:    "build-host",
+			Usage:   "environment variable reference for reading in build host",
+			Sources: cli.EnvVars("VELA_BUILD_HOST", "BUILD_HOST"),
 		},
 		&cli.StringFlag{
-			Name:  "build-link",
-			Usage: "environment variable reference for reading in build link",
-			Sources: cli.NewValueSourceChain(
-				cli.EnvVar("VELA_BUILD_LINK"),
-				cli.EnvVar("BUILD_LINK"),
-			),
+			Name:    "build-link",
+			Usage:   "environment variable reference for reading in build link",
+			Sources: cli.EnvVars("VELA_BUILD_LINK", "BUILD_LINK"),
 		},
 		&cli.StringFlag{
-			Name:  "build-message",
-			Usage: "environment variable reference for reading in build message",
-			Sources: cli.NewValueSourceChain(
-				cli.EnvVar("VELA_BUILD_MESSAGE"),
-				cli.EnvVar("BUILD_MESSAGE"),
-			),
+			Name:    "build-message",
+			Usage:   "environment variable reference for reading in build message",
+			Sources: cli.EnvVars("VELA_BUILD_MESSAGE", "BUILD_MESSAGE"),
 		},
 		&cli.IntFlag{
-			Name:  "build-number",
-			Usage: "environment variable reference for reading in build number",
-			Sources: cli.NewValueSourceChain(
-				cli.EnvVar("VELA_BUILD_NUMBER"),
-				cli.EnvVar("BUILD_NUMBER"),
-			),
+			Name:    "build-number",
+			Usage:   "environment variable reference for reading in build number",
+			Sources: cli.EnvVars("VELA_BUILD_NUMBER", "BUILD_NUMBER"),
 		},
 		&cli.IntFlag{
-			Name:  "build-parent",
-			Usage: "environment variable reference for reading in build parent",
-			Sources: cli.NewValueSourceChain(
-				cli.EnvVar("VELA_BUILD_PARENT"),
-				cli.EnvVar("BUILD_PARENT"),
-			),
+			Name:    "build-parent",
+			Usage:   "environment variable reference for reading in build parent",
+			Sources: cli.EnvVars("VELA_BUILD_PARENT", "BUILD_PARENT"),
 		},
 		&cli.StringFlag{
-			Name:  "build-ref",
-			Usage: "environment variable reference for reading in build ref",
-			Sources: cli.NewValueSourceChain(
-				cli.EnvVar("VELA_BUILD_REF"),
-				cli.EnvVar("BUILD_REF"),
-			),
+			Name:    "build-ref",
+			Usage:   "environment variable reference for reading in build ref",
+			Sources: cli.EnvVars("VELA_BUILD_REF", "BUILD_REF"),
 		},
 		&cli.StringFlag{
-			Name:  "build-sender",
-			Usage: "environment variable reference for reading in build sender",
-			Sources: cli.NewValueSourceChain(
-				cli.EnvVar("VELA_BUILD_SENDER"),
-				cli.EnvVar("BUILD_SENDER"),
-			),
+			Name:    "build-sender",
+			Usage:   "environment variable reference for reading in build sender",
+			Sources: cli.EnvVars("VELA_BUILD_SENDER", "BUILD_SENDER"),
 		},
 		&cli.IntFlag{
-			Name:  "build-started",
-			Usage: "environment variable reference for reading in build started",
-			Sources: cli.NewValueSourceChain(
-				cli.EnvVar("VELA_BUILD_STARTED"),
-				cli.EnvVar("BUILD_STARTED"),
-			),
+			Name:    "build-started",
+			Usage:   "environment variable reference for reading in build started",
+			Sources: cli.EnvVars("VELA_BUILD_STARTED", "BUILD_STARTED"),
 		},
 		&cli.StringFlag{
-			Name:  "build-source",
-			Usage: "environment variable reference for reading in build source",
-			Sources: cli.NewValueSourceChain(
-				cli.EnvVar("VELA_BUILD_SOURCE"),
-				cli.EnvVar("BUILD_SOURCE"),
-			),
+			Name:    "build-source",
+			Usage:   "environment variable reference for reading in build source",
+			Sources: cli.EnvVars("VELA_BUILD_SOURCE", "BUILD_SOURCE"),
 		},
 		&cli.StringFlag{
-			Name:  "build-tag",
-			Usage: "environment variable reference for reading in build tag",
-			Sources: cli.NewValueSourceChain(
-				cli.EnvVar("VELA_BUILD_TAG"),
-				cli.EnvVar("BUILD_TAG"),
-			),
+			Name:    "build-tag",
+			Usage:   "environment variable reference for reading in build tag",
+			Sources: cli.EnvVars("VELA_BUILD_TAG", "BUILD_TAG"),
 		},
 		&cli.StringFlag{
-			Name:  "build-title",
-			Usage: "environment variable reference for reading in build title",
-			Sources: cli.NewValueSourceChain(
-				cli.EnvVar("VELA_BUILD_TITLE"),
-				cli.EnvVar("BUILD_TITLE"),
-			),
+			Name:    "build-title",
+			Usage:   "environment variable reference for reading in build title",
+			Sources: cli.EnvVars("VELA_BUILD_TITLE", "BUILD_TITLE"),
 		},
 		&cli.StringFlag{
-			Name:  "build-workspace",
-			Usage: "environment variable reference for reading in build workspace",
-			Sources: cli.NewValueSourceChain(
-				cli.EnvVar("VELA_BUILD_WORKSPACE"),
-				cli.EnvVar("BUILD_WORKSPACE"),
-			),
+			Name:    "build-workspace",
+			Usage:   "environment variable reference for reading in build workspace",
+			Sources: cli.EnvVars("VELA_BUILD_WORKSPACE", "BUILD_WORKSPACE"),
 		},
 
 		// Repository Environment Variable Flags
