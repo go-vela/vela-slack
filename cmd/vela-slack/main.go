@@ -54,71 +54,131 @@ func main() {
 	// Plugin Flags
 	cmd.Flags = []cli.Flag{
 		&cli.StringFlag{
-			Name:    "log.level",
-			Value:   "info",
-			Usage:   "set log level - options: (trace|debug|info|warn|error|fatal|panic)",
-			Sources: cli.EnvVars("PARAMETER_LOG_LEVEL", "SLACK_LOG_LEVEL"),
+			Name:  "log.level",
+			Value: "info",
+			Usage: "set log level - options: (trace|debug|info|warn|error|fatal|panic)",
+			Sources: cli.NewValueSourceChain(
+				cli.EnvVar("PARAMETER_LOG_LEVEL"),
+				cli.EnvVar("SLACK_LOG_LEVEL"),
+				cli.File("/vela/parameters/slack/log_level"),
+				cli.File("/vela/secrets/slack/log_level"),
+			),
 		},
 		&cli.StringFlag{
-			Name:    "sslcert.path",
-			Usage:   "path to ssl cert file",
-			Sources: cli.EnvVars("PARAMETER_SSL_CERT_FILE", "SSL_CERT_FILE"),
+			Name:  "sslcert.path",
+			Usage: "path to ssl cert file",
+			Sources: cli.NewValueSourceChain(
+				cli.EnvVar("PARAMETER_SSL_CERT_FILE"),
+				cli.EnvVar("SSL_CERT_FILE"),
+				cli.File("/vela/parameters/ssl_cert_file/filepath"),
+				cli.File("/vela/secrets/ssl_cert_file/filepath"),
+			),
 		},
 
 		// Config Flags
 
 		&cli.StringFlag{
-			Name:    "filepath",
-			Usage:   "file path field for setting a path to a message file",
-			Sources: cli.EnvVars("PARAMETER_FILEPATH", "SLACK_FILEPATH"),
+			Name:  "filepath",
+			Usage: "file path field for setting a path to a message file",
+			Sources: cli.NewValueSourceChain(
+				cli.EnvVar("PARAMETER_FILEPATH"),
+				cli.EnvVar("SLACK_FILEPATH"),
+				cli.File("/vela/parameters/slack/filepath"),
+				cli.File("/vela/secrets/slack/filepath"),
+			),
 		},
 		&cli.StringFlag{
-			Name:    "webhook",
-			Usage:   "slack webhook used to post log messages to channel",
-			Sources: cli.EnvVars("PARAMETER_WEBHOOK", "SLACK_WEBHOOK"),
+			Name:  "webhook",
+			Usage: "slack webhook used to post log messages to channel",
+			Sources: cli.NewValueSourceChain(
+				cli.EnvVar("PARAMETER_WEBHOOK"),
+				cli.EnvVar("SLACK_WEBHOOK"),
+				cli.File("/vela/parameters/slack/webhook"),
+				cli.File("/vela/secrets/slack/webhook"),
+			),
 		},
 		&cli.BoolFlag{
-			Name:    "remote",
-			Usage:   "if filepath is remote or not",
-			Sources: cli.EnvVars("PARAMETER_REMOTE", "SLACK_REMOTE"),
+			Name:  "remote",
+			Usage: "if filepath is remote or not",
+			Sources: cli.NewValueSourceChain(
+				cli.EnvVar("PARAMETER_REMOTE"),
+				cli.EnvVar("SLACK_REMOTE"),
+				cli.File("/vela/parameters/slack/remote"),
+				cli.File("/vela/secrets/slack/remote"),
+			),
 		},
 
 		// Webhook Flags
 
 		&cli.StringFlag{
-			Name:    "slack-username",
-			Usage:   "webhook message field for setting the username",
-			Sources: cli.EnvVars("PARAMETER_USERNAME", "SLACK_USERNAME"),
+			Name:  "slack-username",
+			Usage: "webhook message field for setting the username",
+			Sources: cli.NewValueSourceChain(
+				cli.EnvVar("PARAMETER_USERNAME"),
+				cli.EnvVar("SLACK_USERNAME"),
+				cli.File("/vela/parameters/slack/username"),
+				cli.File("/vela/secrets/slack/username"),
+			),
 		},
 		&cli.StringFlag{
-			Name:    "icon-emoji",
-			Usage:   "webhook message field for setting the icon emoji",
-			Sources: cli.EnvVars("PARAMETER_ICON_EMOJI", "SLACK_ICON_EMOJI"),
+			Name:  "icon-emoji",
+			Usage: "webhook message field for setting the icon emoji",
+			Sources: cli.NewValueSourceChain(
+				cli.EnvVar("PARAMETER_ICON_EMOJI"),
+				cli.EnvVar("SLACK_ICON_EMOJI"),
+				cli.File("/vela/parameters/slack/icon_emoji"),
+				cli.File("/vela/secrets/slack/icon_emoji"),
+			),
 		},
 		&cli.StringFlag{
-			Name:    "icon-url",
-			Usage:   "webhook message field for setting the icon url",
-			Sources: cli.EnvVars("PARAMETER_ICON_URL", "SLACK_ICON_URL"),
+			Name:  "icon-url",
+			Usage: "webhook message field for setting the icon url",
+			Sources: cli.NewValueSourceChain(
+				cli.EnvVar("PARAMETER_ICON_URL"),
+				cli.EnvVar("SLACK_ICON_URL"),
+				cli.File("/vela/parameters/slack/icon_url"),
+				cli.File("/vela/secrets/slack/icon_url"),
+			),
 		},
 		&cli.StringFlag{
-			Name:    "channel",
-			Usage:   "webhook message field for setting channel",
-			Sources: cli.EnvVars("PARAMETER_CHANNEL", "SLACK_CHANNEL"),
+			Name:  "channel",
+			Usage: "webhook message field for setting channel",
+			Sources: cli.NewValueSourceChain(
+				cli.EnvVar("PARAMETER_CHANNEL"),
+				cli.EnvVar("SLACK_CHANNEL"),
+				cli.File("/vela/parameters/slack/channel"),
+				cli.File("/vela/secrets/slack/channel"),
+			),
 		},
 		&cli.StringFlag{
-			Name:    "thread-ts",
-			Usage:   "webhook message field for setting the thread timestamp",
-			Sources: cli.EnvVars("PARAMETER_THREAD_TS", "SLACK_THREAD_TS"),
+			Name:  "thread-ts",
+			Usage: "webhook message field for setting the thread timestamp",
+			Sources: cli.NewValueSourceChain(
+				cli.EnvVar("PARAMETER_THREAD_TS"),
+				cli.EnvVar("SLACK_THREAD_TS"),
+				cli.File("/vela/parameters/slack/thread_ts"),
+				cli.File("/vela/secrets/slack/thread_ts"),
+			),
 		},
 		&cli.StringFlag{
-			Name:    "text",
-			Usage:   "webhook message field for setting text",
-			Sources: cli.EnvVars("PARAMETER_TEXT", "SLACK_TEXT"),
+			Name:  "text",
+			Usage: "webhook message field for setting text",
+			Sources: cli.NewValueSourceChain(
+				cli.EnvVar("PARAMETER_TEXT"),
+				cli.EnvVar("SLACK_TEXT"),
+				cli.File("/vela/parameters/slack/text"),
+				cli.File("/vela/secrets/slack/text"),
+			),
 		},
 		&cli.StringFlag{
-			Name:    "parse",
-			Usage:   "webhook message field for setting parse options",
-			Sources: cli.EnvVars("PARAMETER_PARSE", "SLACK_PARSE"),
+			Name:  "parse",
+			Usage: "webhook message field for setting parse options",
+			Sources: cli.NewValueSourceChain(
+				cli.EnvVar("PARAMETER_PARSE"),
+				cli.EnvVar("SLACK_PARSE"),
+				cli.File("/vela/parameters/slack/parse"),
+				cli.File("/vela/secrets/slack/parse"),
+			),
 		},
 
 		// Build Environment Variable Flags
@@ -280,42 +340,77 @@ func main() {
 		// Registry
 
 		&cli.StringFlag{
-			Name:    "registry-url",
-			Usage:   "registry url",
-			Sources: cli.EnvVars("PARAMETER_REGISTRY", "REGISTRY_URL"),
+			Name:  "registry-url",
+			Usage: "registry url",
+			Sources: cli.NewValueSourceChain(
+				cli.EnvVar("PARAMETER_REGISTRY"),
+				cli.EnvVar("REGISTRY_URL"),
+				cli.File("/vela/parameters/slack/registry_url"),
+				cli.File("/vela/secrets/slack/registry_url"),
+			),
 		},
 
 		// Optional LDAP config flags
 
 		&cli.StringFlag{
-			Name:    "ldap-username",
-			Usage:   "environment variable for LDAP username",
-			Sources: cli.EnvVars("PARAMETER_LDAP_USERNAME", "LDAP_USERNAME"),
+			Name:  "ldap-username",
+			Usage: "environment variable for LDAP username",
+			Sources: cli.NewValueSourceChain(
+				cli.EnvVar("PARAMETER_LDAP_USERNAME"),
+				cli.EnvVar("LDAP_USERNAME"),
+				cli.File("/vela/parameters/slack/ldap_username"),
+				cli.File("/vela/secrets/slack/ldap_username"),
+			),
 		},
 		&cli.StringFlag{
-			Name:    "ldap-password",
-			Usage:   "environment variable for LDAP password",
-			Sources: cli.EnvVars("PARAMETER_LDAP_PASSWORD", "LDAP_PASSWORD"),
+			Name:  "ldap-password",
+			Usage: "environment variable for LDAP password",
+			Sources: cli.NewValueSourceChain(
+				cli.EnvVar("PARAMETER_LDAP_PASSWORD"),
+				cli.EnvVar("LDAP_PASSWORD"),
+				cli.File("/vela/parameters/slack/ldap_password"),
+				cli.File("/vela/secrets/slack/ldap_password"),
+			),
 		},
 		&cli.StringFlag{
-			Name:    "ldap-server",
-			Usage:   "environment variable for enterprise LDAP server",
-			Sources: cli.EnvVars("PARAMETER_LDAP_SERVER", "LDAP_SERVER"),
+			Name:  "ldap-server",
+			Usage: "environment variable for enterprise LDAP server",
+			Sources: cli.NewValueSourceChain(
+				cli.EnvVar("PARAMETER_LDAP_SERVER"),
+				cli.EnvVar("LDAP_SERVER"),
+				cli.File("/vela/parameters/slack/ldap_server"),
+				cli.File("/vela/secrets/slack/ldap_server"),
+			),
 		},
 		&cli.StringFlag{
-			Name:    "ldap-port",
-			Usage:   "environment variable for enterprise LDAP port",
-			Sources: cli.EnvVars("PARAMETER_LDAP_PORT", "LDAP_PORT"),
+			Name:  "ldap-port",
+			Usage: "environment variable for enterprise LDAP port",
+			Sources: cli.NewValueSourceChain(
+				cli.EnvVar("PARAMETER_LDAP_PORT"),
+				cli.EnvVar("LDAP_PORT"),
+				cli.File("/vela/parameters/slack/ldap_port"),
+				cli.File("/vela/secrets/slack/ldap_port"),
+			),
 		},
 		&cli.StringFlag{
-			Name:    "ldap-search-base",
-			Usage:   "environment variable for enterprise LDAP search base",
-			Sources: cli.EnvVars("PARAMETER_LDAP_SEARCH_BASE", "LDAP_SEARCH_BASE"),
+			Name:  "ldap-search-base",
+			Usage: "environment variable for enterprise LDAP search base",
+			Sources: cli.NewValueSourceChain(
+				cli.EnvVar("PARAMETER_LDAP_SEARCH_BASE"),
+				cli.EnvVar("LDAP_SEARCH_BASE"),
+				cli.File("/vela/parameters/slack/ldap_search_base"),
+				cli.File("/vela/secrets/slack/ldap_search_base"),
+			),
 		},
 		&cli.StringFlag{
-			Name:    "token",
-			Usage:   "github token from user",
-			Sources: cli.EnvVars("PARAMETER_TOKEN", "GITHUB_TOKEN"),
+			Name:  "token",
+			Usage: "github token from user",
+			Sources: cli.NewValueSourceChain(
+				cli.EnvVar("PARAMETER_TOKEN"),
+				cli.EnvVar("GITHUB_TOKEN"),
+				cli.File("/vela/parameters/slack/token"),
+				cli.File("/vela/secrets/slack/token"),
+			),
 		},
 	}
 
