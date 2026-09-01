@@ -9,7 +9,7 @@ require (
 	github.com/go-vela/server v0.27.5
 	github.com/joho/godotenv v1.5.1
 	github.com/sirupsen/logrus v1.9.4
-	github.com/slack-go/slack v0.19.0
+	github.com/slack-go/slack v0.23.1
 	github.com/urfave/cli/v3 v3.7.0
 )
 
