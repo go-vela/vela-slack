@@ -9,7 +9,7 @@ require (
 	github.com/go-vela/server v0.27.5
 	github.com/joho/godotenv v1.5.1
 	github.com/sirupsen/logrus v1.9.4
-	github.com/slack-go/slack v0.19.0
+	github.com/slack-go/slack v0.23.1
 	github.com/urfave/cli/v3 v3.7.0
 )
 
@@ -26,11 +26,11 @@ require (
 
 require (
 	dario.cat/mergo v1.0.2 // indirect
-	github.com/Azure/go-ntlmssp v0.0.0-20221128193559-754e69321358 // indirect
+	github.com/Azure/go-ntlmssp v0.1.1 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
-	github.com/buger/jsonparser v1.1.1 // indirect
-	github.com/expr-lang/expr v1.17.6 // indirect
+	github.com/buger/jsonparser v1.1.2 // indirect
+	github.com/expr-lang/expr v1.17.7 // indirect
 	github.com/go-asn1-ber/asn1-ber v1.5.8-0.20250403174932-29230038a667 // indirect
 	github.com/golang-jwt/jwt/v5 v5.3.0 // indirect
 	github.com/google/go-github/v80 v80.0.0 // indirect
