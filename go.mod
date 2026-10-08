@@ -3,14 +3,14 @@ module github.com/go-vela/vela-slack
 go 1.25.7
 
 require (
-	github.com/Masterminds/semver/v3 v3.4.0
+	github.com/Masterminds/semver/v3 v3.5.0
 	github.com/Masterminds/sprig/v3 v3.3.0
-	github.com/go-ldap/ldap/v3 v3.4.12
-	github.com/go-vela/server v0.27.5
+	github.com/go-ldap/ldap/v3 v3.4.15
+	github.com/go-vela/server v0.28.8
 	github.com/joho/godotenv v1.5.1
-	github.com/sirupsen/logrus v1.9.4
-	github.com/slack-go/slack v0.23.1
-	github.com/urfave/cli/v3 v3.7.0
+	github.com/sirupsen/logrus v1.10.2
+	github.com/slack-go/slack v0.30.1
+	github.com/urfave/cli/v3 v3.14.0
 )
 
 require (
