@@ -40,7 +40,7 @@ jobs:
           make build-static-ci
 
       - name: publish
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: elgohr/Publish-Docker-Github-Action@8217e91c0369a5342a4ef2d612de87492410a666 # master
         with:
           name: target/vela-slack
           cache: true
