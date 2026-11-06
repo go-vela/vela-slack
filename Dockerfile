@@ -4,7 +4,7 @@
 ##    docker build --no-cache --target certs -t vela-slack:certs .    ##
 ########################################################################
 
-FROM alpine:3.23.3@sha256:25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659 as certs
+FROM alpine:3.24.4@sha256:93b41ef40b1677fce8fcc64ff4af09daddfacf5040afde618bc46c1e2d1cc7d4 as certs
 
 RUN apk add --update --no-cache ca-certificates
 
